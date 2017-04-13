@@ -8,10 +8,10 @@
     tools:context="com.example.caozhongli.tripbuddy.Login">
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/btnSignin"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText2"
+        android:layout_below="@+id/edtPassword"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="58dp"
         android:background="@color/WordDark"
@@ -20,7 +20,7 @@
         android:textColor="@color/colorPrimary" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/edtUser"
         android:layout_width="250dp"
         android:layout_height="40dp"
         android:layout_alignParentTop="true"
@@ -33,7 +33,7 @@
         android:textColor="@color/colorPrimaryDark" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/edtPassword"
         android:background="@color/colorPrimary"
         android:textColor="@color/colorPrimaryDark"
         android:layout_width="250dp"
@@ -41,9 +41,9 @@
         android:layout_marginTop="50dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:layout_below="@+id/editText3"
-        android:layout_alignLeft="@+id/editText3"
-        android:layout_alignStart="@+id/editText3" />
+        android:layout_below="@+id/edtUser"
+        android:layout_alignLeft="@+id/edtUser"
+        android:layout_alignStart="@+id/edtUser" />
 
     <TextView
         android:id="@+id/textView3"
@@ -54,7 +54,7 @@
         android:textColor="@color/WordLight"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:layout_below="@+id/editText3"
+        android:layout_below="@+id/edtUser"
         android:layout_centerHorizontal="true" />
 
     <TextView
@@ -70,12 +70,12 @@
         android:layout_marginBottom="50dp" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btnSignup"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button4"
-        android:layout_alignStart="@+id/button4"
-        android:layout_below="@+id/button4"
+        android:layout_alignLeft="@+id/btnSignin"
+        android:layout_alignStart="@+id/btnSignin"
+        android:layout_below="@+id/btnSignin"
         android:layout_marginTop="23dp"
         android:background="@color/WordLight"
         android:text="Sign Up"
@@ -86,41 +86,41 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button2"
+        android:layout_below="@+id/btnSignup"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="You can continue with the following "
         android:textColor="@color/colorPrimaryDark" />
 
-    <com.facebook.login.widget.LoginButton
-        xmlns:facebook="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/loginButton"
+    <com.facebook.login.widget.LoginButton xmlns:facebook="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/btnFSignin"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
         android:layout_below="@+id/textView5"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp" />
+
     <com.google.android.gms.common.SignInButton
+        android:id="@+id/btnGSignin"
         android:layout_width="200dp"
         android:layout_height="40dp"
-        android:layout_marginTop="11dp"
-        android:id="@+id/signInButton"
-        android:layout_below="@+id/loginButton"
-        android:layout_alignLeft="@+id/loginButton"
-        android:layout_alignStart="@+id/loginButton">
+        android:layout_alignLeft="@+id/btnFSignin"
+        android:layout_alignStart="@+id/btnFSignin"
+        android:layout_below="@+id/btnFSignin"
+        android:layout_marginTop="12dp">
 
     </com.google.android.gms.common.SignInButton>
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/btnGBpassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/edtPassword"
+        android:layout_alignRight="@+id/edtPassword"
+        android:layout_below="@+id/edtPassword"
         android:background="@color/LoginBackground"
         android:text="Forget your password?"
         android:textAllCaps="false"
-        android:textSize="8sp"
-        android:layout_below="@+id/editText2"
-        android:layout_alignRight="@+id/editText2"
-        android:layout_alignEnd="@+id/editText2" />
+        android:textSize="8sp" />
 
 </RelativeLayout>
