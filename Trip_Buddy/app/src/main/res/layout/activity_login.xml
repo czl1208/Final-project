@@ -16,6 +16,7 @@
         android:layout_marginTop="58dp"
         android:background="@color/WordDark"
         android:text="Sign in"
+        android:textAllCaps="false"
         android:textColor="@color/colorPrimary" />
 
     <EditText
@@ -78,6 +79,7 @@
         android:layout_marginTop="23dp"
         android:background="@color/WordLight"
         android:text="Sign Up"
+        android:textAllCaps="false"
         android:textColor="@color/colorPrimary" />
 
     <TextView
@@ -89,23 +91,36 @@
         android:layout_marginTop="20dp"
         android:text="You can continue with the following "
         android:textColor="@color/colorPrimaryDark" />
+
     <com.facebook.login.widget.LoginButton
-        android:layout_width="wrap_content"
+        xmlns:facebook="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/loginButton"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="14dp"
         android:layout_below="@+id/textView5"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/loginButton" />
+        android:layout_centerHorizontal="true" />
     <com.google.android.gms.common.SignInButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="11dp"
+        android:id="@+id/signInButton"
         android:layout_below="@+id/loginButton"
-        android:layout_marginTop="15dp"
-        android:layout_alignRight="@+id/loginButton"
-        android:layout_alignEnd="@+id/loginButton"
         android:layout_alignLeft="@+id/loginButton"
         android:layout_alignStart="@+id/loginButton">
 
     </com.google.android.gms.common.SignInButton>
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/LoginBackground"
+        android:text="Forget your password?"
+        android:textAllCaps="false"
+        android:textSize="8sp"
+        android:layout_below="@+id/editText2"
+        android:layout_alignRight="@+id/editText2"
+        android:layout_alignEnd="@+id/editText2" />
 
 </RelativeLayout>
