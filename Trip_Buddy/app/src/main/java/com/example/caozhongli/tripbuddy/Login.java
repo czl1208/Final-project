@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
@@ -36,6 +37,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import org.w3c.dom.Text;
+
 public class Login extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
     private FirebaseAuth mAuth;
@@ -45,7 +48,7 @@ public class Login extends AppCompatActivity implements
     // private Button btnFSignin;
     private Button btnGSignin;
     private Button btnLogout;
-    private Button btnGBpassword;
+    private TextView btnGBpassword;
     private EditText edtUser;
 
     private EditText edtPassword;
@@ -60,12 +63,12 @@ public class Login extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
         FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
         loginManager = LoginManager.getInstance();
         loginButton = (LoginButton) findViewById(R.id.btnFSignin);
-        btnGBpassword = (Button) findViewById(R.id.btnGBpassword);
+        btnGBpassword = (TextView) findViewById(R.id.btnGBpassword);
         edtUser = (EditText) findViewById(R.id.edtUser);
         mProgressDialog = new ProgressDialog(this);
         //loginButton.setReadPermissions("email", "public_profile");

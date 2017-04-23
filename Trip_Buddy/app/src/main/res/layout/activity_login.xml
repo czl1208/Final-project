@@ -33,16 +33,16 @@
 
     <EditText
         android:id="@+id/edtPassword"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/colorPrimaryDark"
         android:layout_width="250dp"
         android:layout_height="40dp"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:layout_below="@+id/textView3"
         android:layout_alignLeft="@+id/edtUser"
-        android:layout_alignStart="@+id/edtUser" />
+        android:layout_alignStart="@+id/edtUser"
+        android:layout_below="@+id/textView3"
+        android:layout_marginTop="12dp"
+        android:background="@color/colorPrimary"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:textColor="@color/colorPrimaryDark" />
 
     <TextView
         android:id="@+id/textView3"
@@ -64,7 +64,6 @@
         android:textColor="@color/WordLight"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:layout_below="@+id/signInButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="11dp" />
 
@@ -110,10 +109,11 @@
         android:layout_alignLeft="@+id/btnFSignin"
         android:layout_alignStart="@+id/btnFSignin" />
 
-    <Button
+    <TextView
         android:id="@+id/btnGBpassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:gravity="center"
         android:layout_alignEnd="@+id/edtPassword"
         android:layout_alignRight="@+id/edtPassword"
         android:layout_below="@+id/edtPassword"

@@ -40,7 +40,7 @@ public class Register extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         progressdilog = new ProgressDialog(this);
         edtEmail = (EditText) findViewById(R.id.edtEmail);
         edtPassword1 = (EditText) findViewById(R.id.edtPassword);
@@ -122,7 +122,7 @@ public class Register extends AppCompatActivity {
 
     }
     public void Cancel(){
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), Login.class);
         finish();
         startActivity(intent);
     }
