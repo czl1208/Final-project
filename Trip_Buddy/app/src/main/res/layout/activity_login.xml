@@ -9,7 +9,7 @@
 
     <Button
         android:id="@+id/btnSignin"
-        android:layout_width="120dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:background="@color/WordDark"
         android:text="Sign in"
@@ -22,9 +22,8 @@
         android:id="@+id/edtUser"
         android:layout_width="250dp"
         android:layout_height="40dp"
-
         android:layout_marginTop="21dp"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/roundedttext"
         android:ems="10"
         android:inputType="textPersonName"
         android:textColor="@color/colorPrimaryDark"
@@ -39,7 +38,7 @@
         android:layout_alignStart="@+id/edtUser"
         android:layout_below="@+id/textView3"
         android:layout_marginTop="12dp"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/roundedttext"
         android:ems="10"
         android:inputType="textPassword"
         android:textColor="@color/colorPrimaryDark" />
@@ -69,7 +68,7 @@
 
     <Button
         android:id="@+id/btnSignup"
-        android:layout_width="120dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
         android:background="@color/WordLight"
