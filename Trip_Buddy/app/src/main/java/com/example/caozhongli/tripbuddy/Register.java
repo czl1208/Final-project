@@ -19,6 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import static android.graphics.Color.RED;
 
@@ -93,8 +94,21 @@ public class Register extends AppCompatActivity {
                             // signed in user can be handled in the listener.
                             if (task.isSuccessful()) {
                                 alert("Sign up successfully!");
+                                String username = edtUserName.getText().toString();
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 user.sendEmailVerification();
+                                UserProfileChangeRequest profile = new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(username).build();
+
+                                user.updateProfile(profile)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.d(TAG, "User profile updated.");
+                                                }
+                                            }
+                                        });
                                 progressdilog.dismiss();
                             }else{
                                 alert("Sign Up failed");
