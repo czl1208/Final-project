@@ -45,6 +45,7 @@ public class Login extends AppCompatActivity implements
     // private Button btnFSignin;
     private Button btnGSignin;
     private Button btnLogout;
+    private Button btnGBpassword;
     private EditText edtUser;
 
     private EditText edtPassword;
@@ -64,6 +65,8 @@ public class Login extends AppCompatActivity implements
         mCallbackManager = CallbackManager.Factory.create();
         loginManager = LoginManager.getInstance();
         loginButton = (LoginButton) findViewById(R.id.btnFSignin);
+        btnGBpassword = (Button) findViewById(R.id.btnGBpassword);
+        edtUser = (EditText) findViewById(R.id.edtUser);
         mProgressDialog = new ProgressDialog(this);
         //loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
@@ -118,6 +121,7 @@ public class Login extends AppCompatActivity implements
         btnSignup = (Button) findViewById(R.id.btnSignup);
         btnSignup.setOnClickListener(this);
         btnSignin.setOnClickListener(this);
+        btnGBpassword.setOnClickListener(this);
 
         //btnFSignin.setOnClickListener(this);
         findViewById(R.id.btnGSignin).setOnClickListener(this);
@@ -259,6 +263,14 @@ public class Login extends AppCompatActivity implements
                     }
                 });
     }
+    public void getbackPassword(){
+        String email = edtUser.getText().toString();
+        if(email.length()==0){
+            alert("Please input your email");
+        }else {
+            mAuth.sendPasswordResetEmail(email);
+        }
+    }
     public void FsignIn(){
 
     }
@@ -276,6 +288,9 @@ public class Login extends AppCompatActivity implements
                 GsignIn();
                 //break;
                 //Toast.makeText(getApplicationContext(),"Hi", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.btnGBpassword:
+                getbackPassword();
                 break;
 
         }
