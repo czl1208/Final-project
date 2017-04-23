@@ -163,7 +163,12 @@ public class Login extends AppCompatActivity implements
                                 Log.w(TAG, "signInWithEmail:failed", task.getException());
                                 alert("No exiting user or wrong password");
                             } else {
-                                alert("Sign in successfully!");
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                if(user.isEmailVerified()) {
+                                    alert("Sign in successfully!");
+                                }else{
+                                    alert("Please verify your email");
+                                }
                             }
                             mProgressDialog.dismiss();
                         }

@@ -94,6 +94,7 @@ public class Register extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 alert("Sign up successfully!");
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                user.sendEmailVerification();
                                 progressdilog.dismiss();
                             }else{
                                 alert("Sign Up failed");
