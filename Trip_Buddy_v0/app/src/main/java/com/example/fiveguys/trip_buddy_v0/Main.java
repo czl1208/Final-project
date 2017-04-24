@@ -24,6 +24,8 @@ import com.facebook.login.LoginManager;
 import com.facebook.share.model.ShareLinkContent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -47,16 +49,12 @@ public class Main extends AppCompatActivity
             startActivity(intent);
             finish();
         }
-//        username = user.getDisplayName();
-//        email = user.getEmail();
-//        uid = user.getUid();
-//        photoUrl = user.getPhotoUrl();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-        TextView hello = (TextView) findViewById(R.id.hello);
-        hello.setText(username);
+
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -70,6 +68,12 @@ public class Main extends AppCompatActivity
                 //finish();
             }
         });
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        DatabaseReference Users = myRef.child("users");
+        Users.child(uid).child("name").setValue(username);
+        Users.child(uid).child("email").setValue(email);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
