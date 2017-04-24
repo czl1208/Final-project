@@ -89,11 +89,18 @@ public class Login extends AppCompatActivity implements
                 handleFacebookAccessToken(loginResult.getAccessToken());
                 Profile profile = Profile.getCurrentProfile();
                 if (profile != null){
+
                     String userName = profile.getName().toString();
                     String userEmail = "";
                     String userPic = "https://graph.facebook.com/" + loginResult.getAccessToken().
                             getUserId() + "/picture?type=large";
                     Uri userPicuri = Uri.parse(userPic);
+                    uprofile = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(userName).setPhotoUri(userPicuri).build();
+                }else{
+
+                    String userName = "";
+                    Uri userPicuri = Uri.parse("");
                     uprofile = new UserProfileChangeRequest.Builder()
                             .setDisplayName(userName).setPhotoUri(userPicuri).build();
                 }

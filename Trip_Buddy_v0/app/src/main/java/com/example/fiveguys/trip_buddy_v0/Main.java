@@ -40,6 +40,7 @@ public class Main extends AppCompatActivity
         } else {
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
+            finish();
         }
 //        username = user.getDisplayName();
 //        email = user.getEmail();
@@ -144,6 +145,7 @@ public class Main extends AppCompatActivity
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
