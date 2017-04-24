@@ -2,6 +2,7 @@ package com.example.fiveguys.trip_buddy_v0;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -36,8 +38,11 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import org.w3c.dom.Text;
+
+import java.net.URL;
 
 public class Login extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
@@ -50,9 +55,13 @@ public class Login extends AppCompatActivity implements
     private Button btnLogout;
     private TextView btnGBpassword;
     private EditText edtUser;
-
+    private String userId;
+    private String userEmail;
+    private String userName;
+    private String userPic;
     private EditText edtPassword;
     private static final int RC_SIGN_IN = 9001;
+    private UserProfileChangeRequest uprofile;
     //private ProgressDialog progressdialog;
     private GoogleApiClient mGoogleApiClient;
     private LoginManager loginManager;
@@ -78,6 +87,16 @@ public class Login extends AppCompatActivity implements
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
 
                 handleFacebookAccessToken(loginResult.getAccessToken());
+                Profile profile = Profile.getCurrentProfile();
+                if (profile != null){
+                    String userName = profile.getName().toString();
+                    String userEmail = "";
+                    String userPic = "https://graph.facebook.com/" + loginResult.getAccessToken().
+                            getUserId() + "/picture?type=large";
+                    Uri userPicuri = Uri.parse(userPic);
+                    uprofile = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(userName).setPhotoUri(userPicuri).build();
+                }
 
             }
 
@@ -188,6 +207,7 @@ public class Login extends AppCompatActivity implements
     public void signUp(){
         Intent intent = new Intent(getApplicationContext(), Register.class);
         startActivity(intent);
+
     }
     public void GsignIn(){
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -212,7 +232,7 @@ public class Login extends AppCompatActivity implements
             }
         }
     }
-    private void handleFacebookAccessToken(AccessToken token) {
+    private void handleFacebookAccessToken(final AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mProgressDialog.setMessage("Authorizing ...");
@@ -232,6 +252,18 @@ public class Login extends AppCompatActivity implements
                                     Toast.LENGTH_SHORT).show();
                         }else{
                             alert("Sign in successfully!");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            user.updateProfile(uprofile)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d(TAG, "User profile updated.");
+                                            }
+                                        }
+                                    });
+                            Intent intent = new Intent(getApplicationContext(), Main.class);
+                            startActivity(intent);
                         }
                         mProgressDialog.dismiss();
                         // ...
@@ -242,7 +274,10 @@ public class Login extends AppCompatActivity implements
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         // [START_EXCLUDE silent]
         // [END_EXCLUDE]
-
+        String userName = acct.getDisplayName().toString();
+        Uri userPicuri = acct.getPhotoUrl();
+        new UserProfileChangeRequest.Builder()
+                .setDisplayName(userName).setPhotoUri(userPicuri).build();
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mProgressDialog.setMessage("Authorizing ...");
         mProgressDialog.show();
@@ -259,8 +294,22 @@ public class Login extends AppCompatActivity implements
                             Log.w(TAG, "signInWithCredential", task.getException());
                             alert("Authentication failed.");
 
+
+
                         }else{
                             alert("Sign in successfully!");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            user.updateProfile(uprofile)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d(TAG, "User profile updated.");
+                                            }
+                                        }
+                                    });
+                            Intent intent = new Intent(getApplicationContext(), Main.class);
+                            startActivity(intent);
                         }
                         mProgressDialog.dismiss();
                         // [START_EXCLUDE]
