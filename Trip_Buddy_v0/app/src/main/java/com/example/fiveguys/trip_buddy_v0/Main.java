@@ -141,7 +141,8 @@ public class Main extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_account) {
-            // Handle the camera action
+            Intent intent = new Intent(getApplicationContext(), MyInfo.class);// Handle the camera action
+            startActivity(intent);
         } else if (id == R.id.nav_tripHistory) {
 
         } else if (id == R.id.nav_chat) {

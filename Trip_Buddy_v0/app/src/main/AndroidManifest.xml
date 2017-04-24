@@ -65,7 +65,11 @@
             android:name=".NewTrip"
             android:label="@string/title_activity_new_trip"
             android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar"></activity>
-        <activity android:name=".MyInfo"></activity>
+        <activity
+            android:name=".MyInfo"
+            android:theme="@style/AppTheme.NoActionBar">
+            >
+        </activity>
     </application>
 
 </manifest>

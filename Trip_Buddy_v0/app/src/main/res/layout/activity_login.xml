@@ -19,18 +19,18 @@ tools:context="com.example.fiveguys.trip_buddy_v0.Login">
     android:layout_centerHorizontal="true"
     android:layout_marginBottom="11dp" />
 
-<EditText
-    style="@style/edtTextStyle"
-    android:id="@+id/edtUser"
-    android:gravity="center"
-    android:hint="User's email"
-    android:layout_width="250dp"
-    android:layout_height="40dp"
-    android:ems="10"
-    android:inputType="textPersonName"
-    android:layout_above="@+id/textView3"
-    android:layout_centerHorizontal="true"
-    android:layout_marginBottom="13dp" />
+    <EditText
+        android:id="@+id/edtUser"
+        style="@style/edtTextStyle"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:layout_above="@+id/textView3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="13dp"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="User's email"
+        android:inputType="text" />
 
 <EditText
     style="@style/edtTextStyle"
@@ -42,7 +42,8 @@ tools:context="com.example.fiveguys.trip_buddy_v0.Login">
     android:ems="10"
     android:inputType="textPassword"
     android:layout_above="@+id/btnGBpassword"
-    android:layout_alignStart="@+id/edtUser" />
+    android:layout_alignStart="@+id/edtUser"
+    />
 
 <TextView
     android:id="@+id/textView3"
