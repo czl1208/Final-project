@@ -33,15 +33,18 @@ public class Main extends AppCompatActivity
         super.onCreate(savedInstanceState);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-
+            username = user.getDisplayName();
+            email = user.getEmail();
+            uid = user.getUid();
+            photoUrl = user.getPhotoUrl();
         } else {
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
         }
-        username = user.getDisplayName();
-        email = user.getEmail();
-        uid = user.getUid();
-        photoUrl = user.getPhotoUrl();
+//        username = user.getDisplayName();
+//        email = user.getEmail();
+//        uid = user.getUid();
+//        photoUrl = user.getPhotoUrl();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -49,12 +52,13 @@ public class Main extends AppCompatActivity
         TextView hello = (TextView) findViewById(R.id.hello);
         hello.setText(username);
 
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(getApplicationContext(), Login.class);
                 startActivity(intent);
