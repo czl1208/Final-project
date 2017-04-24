@@ -49,6 +49,7 @@ public class Main extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Your Journey Begins");
 
         TextView hello = (TextView) findViewById(R.id.hello);
         hello.setText(username);
