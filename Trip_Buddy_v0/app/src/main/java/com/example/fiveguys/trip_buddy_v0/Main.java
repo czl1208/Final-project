@@ -1,5 +1,6 @@
 package com.example.fiveguys.trip_buddy_v0;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -82,7 +84,10 @@ public class Main extends AppCompatActivity
 
         nav_name.setText(username);
         nav_email.setText(email);
-         nav_image.setImageURI(photoUrl);
+        if(photoUrl != null) {
+            Picasso.with(getApplicationContext()).load(photoUrl.toString()).into(nav_image);
+        }
+       // nav_image.setImageURI(photoUrl);
 
 
     }

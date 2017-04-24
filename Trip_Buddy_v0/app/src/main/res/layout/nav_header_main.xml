@@ -18,7 +18,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@android:drawable/sym_def_app_icon"
+        app:srcCompat="@mipmap/ic_launcher"
         android:layout_weight="0.3"/>
 
     <LinearLayout
@@ -30,15 +30,16 @@
         >
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="53dp"
-            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
             android:id="@+id/nav_name"
             android:text=""
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="24dp"
             />
 
         <TextView
             android:id="@+id/nav_email"
+            android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="" />
