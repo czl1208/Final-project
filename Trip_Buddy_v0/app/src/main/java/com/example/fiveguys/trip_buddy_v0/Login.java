@@ -276,7 +276,7 @@ public class Login extends AppCompatActivity implements
         // [END_EXCLUDE]
         String userName = acct.getDisplayName().toString();
         Uri userPicuri = acct.getPhotoUrl();
-        new UserProfileChangeRequest.Builder()
+        uprofile = new UserProfileChangeRequest.Builder()
                 .setDisplayName(userName).setPhotoUri(userPicuri).build();
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mProgressDialog.setMessage("Authorizing ...");
@@ -299,15 +299,15 @@ public class Login extends AppCompatActivity implements
                         }else{
                             alert("Sign in successfully!");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            user.updateProfile(uprofile)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Log.d(TAG, "User profile updated.");
-                                            }
-                                        }
-                                    });
+                            user.updateProfile(uprofile);
+//                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<Void> task) {
+//                                            if (task.isSuccessful()) {
+//                                                Log.d(TAG, "User profile updated.");
+//                                            }
+//                                        }
+//                                    });
                             Intent intent = new Intent(getApplicationContext(), Main.class);
                             startActivity(intent);
                         }
