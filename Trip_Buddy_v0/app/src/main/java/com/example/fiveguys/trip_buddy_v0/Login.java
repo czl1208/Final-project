@@ -253,15 +253,15 @@ public class Login extends AppCompatActivity implements
                         }else{
                             alert("Sign in successfully!");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            user.updateProfile(uprofile)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Log.d(TAG, "User profile updated.");
-                                            }
-                                        }
-                                    });
+                            user.updateProfile(uprofile);
+//                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<Void> task) {
+//                                            if (task.isSuccessful()) {
+//                                                Log.d(TAG, "User profile updated.");
+//                                            }
+//                                        }
+//                                    });
                             Intent intent = new Intent(getApplicationContext(), Main.class);
                             startActivity(intent);
                         }
