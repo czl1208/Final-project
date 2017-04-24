@@ -83,6 +83,7 @@ public class Main extends AppCompatActivity
         ImageView nav_image = (ImageView) header.findViewById(R.id.nav_image);
 
         nav_name.setText(username);
+        if(email != null)
         nav_email.setText(email);
         if(photoUrl != null) {
             Picasso.with(getApplicationContext()).load(photoUrl.toString()).into(nav_image);
