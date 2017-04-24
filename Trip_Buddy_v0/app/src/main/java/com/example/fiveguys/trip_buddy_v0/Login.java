@@ -104,7 +104,7 @@ public class Login extends AppCompatActivity implements
                         @Override
                         protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
                             // profile2 is the new profile
-                            userName = profile2.get.getFirstName().toString();
+                            userName = profile2.getFirstName().toString();
                             String userEmail = "";
                             Uri userPicuri = Uri.parse(userPic);
                             uprofile = new UserProfileChangeRequest.Builder()
