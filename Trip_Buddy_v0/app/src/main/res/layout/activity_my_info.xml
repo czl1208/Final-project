@@ -9,41 +9,42 @@
 
     <EditText
         android:id="@+id/edtUserName"
-        android:gravity="center"
-        android:layout_width="100dp"
-        android:textColor="@color/WordDark"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:background="@color/LoginBackground"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="textPersonName"
+        android:textColor="@color/WordDark"
         android:layout_alignBaseline="@+id/textView"
         android:layout_alignBottom="@+id/textView"
-        android:background="@color/LoginBackground"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:layout_alignEnd="@+id/ratingBar" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="11dp" />
 
     <EditText
-        android:gravity="center"
         android:id="@+id/edtUserFav"
-        android:textColor="@color/WordDark"
-        android:layout_width="100dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView7"
+        android:layout_alignStart="@+id/edtUserAge"
         android:background="@color/LoginBackground"
         android:ems="10"
+        android:gravity="center"
         android:inputType="textPersonName"
-        android:layout_alignBottom="@+id/textView7"
-        android:layout_alignStart="@+id/edtUserAge" />
+        android:textColor="@color/WordDark" />
 
     <EditText
-        android:gravity="center"
         android:id="@+id/edtUserAge"
-        android:layout_width="100dp"
-        android:textColor="@color/WordDark"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textView6"
         android:layout_alignBottom="@+id/textView6"
         android:layout_alignStart="@+id/editUserSex"
         android:background="@color/LoginBackground"
         android:ems="10"
-        android:inputType="textPersonName" />
+        android:gravity="center"
+        android:inputType="textPersonName"
+        android:textColor="@color/WordDark" />
 
     <ImageView
         android:id="@+id/UserImag"
@@ -121,15 +122,15 @@
 
     <EditText
         android:id="@+id/editUserSex"
-        android:layout_width="100dp"
-        android:textColor="@color/WordDark"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textView2"
         android:layout_alignBottom="@+id/textView2"
         android:layout_alignStart="@+id/edtUserName"
         android:background="@color/LoginBackground"
         android:ems="10"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:textColor="@color/WordDark" />
 
     <TextView
         android:id="@+id/txtEdit"
