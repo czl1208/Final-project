@@ -20,6 +20,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -58,7 +59,6 @@ public class Login extends AppCompatActivity implements
     private String userId;
     private String userEmail;
     private String userName;
-    private String userPic;
     private EditText edtPassword;
     private static final int RC_SIGN_IN = 9001;
     private UserProfileChangeRequest uprofile;
@@ -69,6 +69,7 @@ public class Login extends AppCompatActivity implements
     private static final String TAG = "Login2";
     private ProgressDialog mProgressDialog;
     private CallbackManager mCallbackManager;
+    public String userPic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,27 +83,39 @@ public class Login extends AppCompatActivity implements
         mProgressDialog = new ProgressDialog(this);
         //loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            private ProfileTracker mProfileTracker;
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
 
                 handleFacebookAccessToken(loginResult.getAccessToken());
                 Profile profile = Profile.getCurrentProfile();
+                userPic = "https://graph.facebook.com/" + loginResult.getAccessToken().
+                        getUserId() + "/picture?type=large";
                 if (profile != null){
 
                     String userName = profile.getName().toString();
                     String userEmail = "";
-                    String userPic = "https://graph.facebook.com/" + loginResult.getAccessToken().
-                            getUserId() + "/picture?type=large";
                     Uri userPicuri = Uri.parse(userPic);
                     uprofile = new UserProfileChangeRequest.Builder()
                             .setDisplayName(userName).setPhotoUri(userPicuri).build();
                 }else{
-
-                    String userName = "";
-                    Uri userPicuri = Uri.parse("");
-                    uprofile = new UserProfileChangeRequest.Builder()
-                            .setDisplayName(userName).setPhotoUri(userPicuri).build();
+                    mProfileTracker = new ProfileTracker() {
+                        @Override
+                        protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
+                            // profile2 is the new profile
+                            userName = profile2.getFirstName().toString();
+                            String userEmail = "";
+                            Uri userPicuri = Uri.parse(userPic);
+                            uprofile = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(userName).setPhotoUri(userPicuri).build();
+                            mProfileTracker.stopTracking();
+                        }
+                    };
+//                    String userName = "";
+//                    Uri userPicuri = Uri.parse("");
+//                    uprofile = new UserProfileChangeRequest.Builder()
+//                            .setDisplayName(userName).setPhotoUri(userPicuri).build();
                 }
 
             }
@@ -222,8 +235,10 @@ public class Login extends AppCompatActivity implements
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+        if(mCallbackManager.onActivityResult(requestCode, resultCode, data)){
+            return;
+        }
         //Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
