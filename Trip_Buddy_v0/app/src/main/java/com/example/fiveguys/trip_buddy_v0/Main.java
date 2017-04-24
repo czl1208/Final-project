@@ -26,39 +26,28 @@ import org.w3c.dom.Text;
 public class Main extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    String username, email, uid;
+    Uri photoUrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String username = "";
-        String email = "";
-        String uid = "";
-        Uri photoUrl;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-             username = user.getDisplayName();
-            email = user.getEmail();
-            uid = user.getUid();
-            photoUrl = user.getPhotoUrl();
+
         } else {
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
         }
-        //photoUrl = user.getPhotoUrl();
+        username = user.getDisplayName();
+        email = user.getEmail();
+        uid = user.getUid();
+        photoUrl = user.getPhotoUrl();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         TextView hello = (TextView) findViewById(R.id.hello);
         hello.setText(username);
-
-
-        TextView nav_name = (TextView) findViewById(R.id.nav_name);
-        TextView nav_email = (TextView) findViewById(R.id.nav_email);
-        ImageView nav_image = (ImageView) findViewById(R.id.nav_image);
-
-        //nav_name.setText(username);
-        //nav_email.setText(email);
-        // nav_image.setImageURI(photoUrl);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +69,21 @@ public class Main extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View header=navigationView.getHeaderView(0);
+        TextView nav_name = (TextView) header.findViewById(R.id.nav_name);
+        TextView nav_email = (TextView) header.findViewById(R.id.nav_email);
+        ImageView nav_image = (ImageView) header.findViewById(R.id.nav_image);
+
+        nav_name.setText(username);
+        nav_email.setText(email);
+         nav_image.setImageURI(photoUrl);
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
 
     }
