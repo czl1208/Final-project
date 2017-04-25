@@ -155,7 +155,7 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
         if(username!=null){
             edtUserName.setText(username);
         }
-        if(photoUrl!=null){
+        if(photoUrl!=null&&photoUrl.length()>0){
             Picasso.with(getApplicationContext()).load(photoUrl.toString()).into(UserImage);
         }
 
