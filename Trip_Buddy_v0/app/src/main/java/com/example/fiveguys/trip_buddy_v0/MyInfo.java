@@ -253,10 +253,8 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
                         UserImage.setImageBitmap(head);
                         try {
                             FileOutputStream fos = openFileOutput("Profile.png", Context.MODE_PRIVATE);
-
                             head.compress(Bitmap.CompressFormat.PNG, 100, fos);
                             String mypath = MyInfo.this.getFilesDir().getAbsolutePath()+"/Profile.png";
-
                             Uri file = Uri.fromFile(new File(mypath));
                             StorageReference profilesRef = mStorageRef.child("images/Profile.png");
 
@@ -317,30 +315,30 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
         startActivityForResult(intent, 3);
     }
 
-    private void setPicToView(Bitmap mBitmap) {
-        String sdStatus = Environment.getExternalStorageState();
-        if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) {
-            return;
-        }
-        FileOutputStream b = null;
-        File file = new File(path);
-        file.mkdirs();
-        String fileName = path + "head.jpg";
-        try {
-            b = new FileOutputStream(fileName);
-            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-
-                b.flush();
-                b.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    private void setPicToView(Bitmap mBitmap) {
+//        String sdStatus = Environment.getExternalStorageState();
+//        if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) {
+//            return;
+//        }
+//        FileOutputStream b = null;
+//        File file = new File(path);
+//        file.mkdirs();
+//        String fileName = path + "head.jpg";
+//        try {
+//            b = new FileOutputStream(fileName);
+//            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//
+//                b.flush();
+//                b.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     @Override
     public void onClick(View v) {
