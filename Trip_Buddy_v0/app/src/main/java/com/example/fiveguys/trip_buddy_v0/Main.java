@@ -170,21 +170,6 @@ public class Main extends AppCompatActivity
                 startActivity(intent);
             }
         });
-<<<<<<< Updated upstream
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
-        DatabaseReference Users = myRef.child("users");
-        Users.child(uid).child("name").setValue(username);
-        Users.child(uid).child("email").setValue(email);
-        Users.child(uid).child("location").setValue(mLastLocation);
-=======
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference();
-//        DatabaseReference Users = myRef.child("users");
-//        Users.child(uid).child("name").setValue(username);
-//        Users.child(uid).child("email").setValue(email);
->>>>>>> Stashed changes
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
