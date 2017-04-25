@@ -149,6 +149,8 @@ public class Main extends AppCompatActivity
             DatabaseReference Users = myRef.child("users");
             Users.child(uid).child("name").setValue(username);
             Users.child(uid).child("email").setValue(email);
+            Users.child(uid).child("location").setValue(mLastLocation);
+
         } else {
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
