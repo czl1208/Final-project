@@ -2,6 +2,7 @@ package com.example.fiveguys.trip_buddy_v0;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -14,6 +15,9 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -38,6 +42,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.List;
@@ -62,12 +70,15 @@ public class NewTrip extends FragmentActivity
     private LatLng sLocation = new LatLng(0, 0);;
     private CharSequence sPlace="None";
     private CharSequence sAddress;
+    private String cAddress;
     private LatLngBounds sBound;
     private String cPlaceNames, cPlaceid, cPlaceAddresses,cPlaceAttributions;
     private LatLng cPlaceLatLngs;
 
     private String sCity;
     private String sId;
+    private TextView Destination;
+    private Button Go;
 
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
@@ -78,6 +89,9 @@ public class NewTrip extends FragmentActivity
 
 
         setContentView(R.layout.activity_new_trip);
+        Destination = (TextView)findViewById(R.id.destination);
+        Go = (Button) findViewById(R.id.Go);
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */,
                         this /* OnConnectionFailedListener */)
@@ -93,6 +107,38 @@ public class NewTrip extends FragmentActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        Go.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(sId == null){
+                    Toast toast = Toast.makeText(getApplicationContext(), "Search For a Destination", Toast.LENGTH_LONG);
+                    toast.show();
+                    return;
+                }
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    String uid = user.getUid();
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef = database.getReference();
+                    DatabaseReference Users = myRef.child("users");
+                    DatabaseReference trip = Users.child(uid).child("trips").child(sId);
+                    trip.child("startAddress").setValue(cAddress);
+                    trip.child("startLocation").setValue(cLocation);
+                    trip.child("destinationName").setValue(sPlace);
+                    trip.child("destinationAddress").setValue(sAddress);
+                    trip.child("destinationLocation").setValue(sLocation);
+                    Intent intent = new Intent(getApplicationContext(), Main.class);
+                    startActivity(intent);
+                    finish();
+
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), Login.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
     }
 
     @Override
@@ -116,7 +162,7 @@ public class NewTrip extends FragmentActivity
                 sLocation = place.getLatLng();
                 sId = place.getId();
                 sAddress = place.getAddress();
-
+                sLocation = place.getLatLng();
                 sBound = place.getViewport();
                 showLocation();
 
@@ -263,7 +309,7 @@ public class NewTrip extends FragmentActivity
                 e.printStackTrace();
             }
 
-            String s = mLastKnownLocation.getLatitude() + "\n" + mLastKnownLocation.getLongitude() + "\n\nMy Currrent City is: \n" + address.toString();
+            cAddress = address.toString();
 
             cLocation = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
             mMap.clear();
@@ -286,6 +332,7 @@ public class NewTrip extends FragmentActivity
                 .position(sLocation)
                 .snippet((String)sAddress));
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(sBound,10));
+        Destination.setText(sAddress);
 
 
     }

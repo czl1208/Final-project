@@ -48,80 +48,58 @@
 
     </android.support.v7.widget.CardView>
 
-    <GridLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:rowCount="3"
-        android:columnCount="2"
+        android:layout_height="150dp"
+        android:orientation="vertical"
+        android:layout_margin="16dp"
+        android:weightSum="10"
         android:background="@color/LoginBackground"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true">
 
-        <TextView
-            android:id="@+id/from"
-            android:layout_width="wrap_content"
-            android:layout_column="0"
-            android:layout_row="0"
-            android:layout_height="wrap_content"
-            android:text="From"
-            android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textColor="@color/WordDark"
-            />
+
 
         <TextView
             android:id="@+id/to"
             android:layout_column="1"
             android:layout_row="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="To"
-            android:layout_columnWeight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="Destination"
             android:gravity="center"
-            android:textSize="24sp"
+            android:layout_weight="2"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/WordDark"
             />
 
-        <TextView
-            android:id="@+id/startLoc"
-            android:layout_width="wrap_content"
-            android:layout_column="0"
-            android:layout_row="1"
-            android:layout_height="wrap_content"
-            android:text="From"
-            android:layout_columnWeight="1"
-            android:textSize="24sp"
-            android:padding="10dp"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textColor="@color/WordLight"
-            />
 
         <TextView
             android:id="@+id/destination"
             android:layout_column="1"
             android:layout_row="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text=""
-            android:layout_columnWeight="1"
-            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="Your Journey Begins"
+            android:layout_weight="5"
+            android:gravity="center|top"
+            android:padding="5dp"
+            android:paddingTop="5dp"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="@color/WordLight"
+            android:textColor="@color/cardview_light_background"
             />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/Go"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:text="GO!"
-            android:textSize="36sp"
-            android:padding="5dp"
+
+            android:textSize="34sp"
+            android:padding="3dp"
+            android:layout_weight="3"
             android:background="@color/WordDark"
             android:textStyle="italic|bold"
             android:textColor="@color/cardview_light_background"
@@ -131,7 +109,7 @@
             />
 
 
-    </GridLayout>
+    </LinearLayout>
     <!--</LinearLayout>-->
 
 </RelativeLayout>
