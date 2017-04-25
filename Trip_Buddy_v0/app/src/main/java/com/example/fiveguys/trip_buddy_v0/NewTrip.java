@@ -128,6 +128,8 @@ public class NewTrip extends FragmentActivity
                     trip.child("destinationName").setValue(sPlace);
                     trip.child("destinationAddress").setValue(sAddress);
                     trip.child("destinationLocation").setValue(sLocation);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Your Jouney Begins", Toast.LENGTH_SHORT);
+                    toast.show();
                     Intent intent = new Intent(getApplicationContext(), Main.class);
                     startActivity(intent);
                     finish();
