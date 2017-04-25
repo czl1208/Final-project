@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -17,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,9 @@ import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
+import com.google.android.gms.location.places.PlacePhotoMetadata;
+import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
+import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -58,7 +64,7 @@ public class NewTrip extends FragmentActivity
                     GoogleApiClient.OnConnectionFailedListener{
 
     private GoogleMap mMap;
-    private GoogleApiClient mGoogleApiClient;
+    public GoogleApiClient mGoogleApiClient;
 
     private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
     private static final int DEFAULT_ZOOM = 15;
@@ -79,6 +85,7 @@ public class NewTrip extends FragmentActivity
     private String sId;
     private TextView Destination;
     private Button Go;
+    private ImageView PlaceImage;
 
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
@@ -91,6 +98,7 @@ public class NewTrip extends FragmentActivity
         setContentView(R.layout.activity_new_trip);
         Destination = (TextView)findViewById(R.id.destination);
         Go = (Button) findViewById(R.id.Go);
+        PlaceImage = (ImageView) findViewById(R.id.placeImage);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */,
@@ -167,8 +175,6 @@ public class NewTrip extends FragmentActivity
                 sLocation = place.getLatLng();
                 sBound = place.getViewport();
                 showLocation();
-
-
                 Log.i(TAG, "Place: " + place.getName());
             }
             @Override
@@ -326,7 +332,97 @@ public class NewTrip extends FragmentActivity
         }
     }
 
-    private void showLocation(){
+    private void placePhotosTask() {// Australian Cruise Group
+
+        // Create a new AsyncTask that displays the bitmap and attribution once loaded.
+        new PhotoTask(PlaceImage.getWidth(), PlaceImage.getHeight()) {
+            @Override
+            protected void onPreExecute() {
+                // Display a temporary image to show while bitmap is loading.
+                PlaceImage.setImageResource(R.drawable.logo_white_outline);
+            }
+
+
+            @Override
+            protected void onPostExecute(AttributedPhoto attributedPhoto) {
+                if (attributedPhoto != null) {
+                    // Photo has been loaded, display it.
+                    PlaceImage.setImageBitmap(attributedPhoto.bitmap);
+//                    // Display the attribution as HTML content if set.
+//                    if (attributedPhoto.attribution == null) {
+//                        mText.setVisibility(View.GONE);
+//                    } else {
+//                        mText.setVisibility(View.VISIBLE);
+//                        mText.setText(Html.fromHtml(attributedPhoto.attribution.toString()));
+//                    }
+
+                }
+            }
+        }.execute(sId);
+    }
+
+    abstract class PhotoTask extends AsyncTask<String, Void, com.example.fiveguys.trip_buddy_v0.NewTrip.PhotoTask.AttributedPhoto> {
+
+        private int mHeight;
+
+        private int mWidth;
+
+        public PhotoTask(int width, int height) {
+            mHeight = height;
+            mWidth = width;
+        }
+
+        /**
+         * Loads the first photo for a place id from the Geo Data API.
+         * The place id must be the first (and only) parameter.
+         */
+        @Override
+        protected com.example.fiveguys.trip_buddy_v0.NewTrip.PhotoTask.AttributedPhoto doInBackground(String... params) {
+            if (params.length != 1) {
+                return null;
+            }
+            final String placeId = params[0];
+            com.example.fiveguys.trip_buddy_v0.NewTrip.PhotoTask.AttributedPhoto attributedPhoto = null;
+
+            PlacePhotoMetadataResult result = Places.GeoDataApi
+                    .getPlacePhotos(mGoogleApiClient, placeId).await();
+
+            if (result.getStatus().isSuccess()) {
+                PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
+                if (photoMetadataBuffer.getCount() > 0 && !isCancelled()) {
+                    // Get the first bitmap and its attributions.
+                    PlacePhotoMetadata photo = photoMetadataBuffer.get(2);
+                    CharSequence attribution = photo.getAttributions();
+                    // Load a scaled bitmap for this photo.
+                    Bitmap image = photo.getScaledPhoto(mGoogleApiClient, mWidth, mHeight).await()
+                            .getBitmap();
+
+                    attributedPhoto = new com.example.fiveguys.trip_buddy_v0.NewTrip.PhotoTask.AttributedPhoto(attribution, image);
+                }
+                // Release the PlacePhotoMetadataBuffer.
+                photoMetadataBuffer.release();
+            }
+            return attributedPhoto;
+        }
+
+            /**
+             * Holder for an image and its attribution.
+             */
+            class AttributedPhoto {
+
+                public final CharSequence attribution;
+
+                public final Bitmap bitmap;
+
+                public AttributedPhoto(CharSequence attribution, Bitmap bitmap) {
+                    this.attribution = attribution;
+                    this.bitmap = bitmap;
+                }
+            }
+
+    }
+
+        private void showLocation(){
         mMap.clear();
         mMap.addMarker(new MarkerOptions()
                 .title((String)sPlace)
@@ -335,8 +431,7 @@ public class NewTrip extends FragmentActivity
                 .snippet((String)sAddress));
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(sBound,10));
         Destination.setText(sAddress);
-
-
+        placePhotosTask();
     }
     public boolean onMyLocationButtonClick() {
         getDeviceLocation();

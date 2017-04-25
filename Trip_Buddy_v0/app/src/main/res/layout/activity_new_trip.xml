@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -21,42 +21,40 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp" />
+        />
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
-        android:layout_width="wrap_content"
-        android:layout_alignStart="@id/map"
-        android:layout_alignEnd="@id/map"
+        android:layout_width="match_parent"
+
         android:layout_height="36dp"
         card_view:cardCornerRadius="4dp"
-        android:background="@color/WordLight"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="0dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="16dp">
-    <fragment
-        android:id="@+id/place_autocomplete_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity = "center"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-        />
+        android:alpha="0.8"
+        app:cardBackgroundColor="@color/cardview_light_background"
+       android:layout_gravity="top|center_horizontal"
+        android:layout_margin="@dimen/map_margin">
+
+        <fragment
+            android:id="@+id/place_autocomplete_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity = "center"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            />
 
     </android.support.v7.widget.CardView>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="130dp"
         android:orientation="vertical"
-        android:layout_margin="16dp"
-        android:weightSum="10"
-        android:background="@color/LoginBackground"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_margin="@dimen/map_margin"
+        android:weightSum="9"
+        android:background="@color/WordLight"
+        android:alpha="0.8"
+        android:layout_gravity="center_horizontal|bottom"
+        android:id="@+id/linearLayout">
 
 
 
@@ -82,13 +80,13 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:text="Your Journey Begins"
-            android:layout_weight="5"
+            android:layout_weight="4"
             android:gravity="center|top"
             android:padding="5dp"
             android:paddingTop="5dp"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="@color/cardview_light_background"
+            android:textColor="@color/DarkGray"
             />
 
         <Button
@@ -96,7 +94,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:text="GO!"
-
+            android:layout_gravity="center"
+            android:gravity="center"
             android:textSize="34sp"
             android:padding="3dp"
             android:layout_weight="3"
@@ -110,6 +109,19 @@
 
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/placeImage"
+        android:layout_width="160dp"
+        android:layout_height="120dp"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/map_margin"
+        android:layout_marginBottom="150dp"
+
+
+         />
+
+
     <!--</LinearLayout>-->
 
-</RelativeLayout>
+</FrameLayout>
