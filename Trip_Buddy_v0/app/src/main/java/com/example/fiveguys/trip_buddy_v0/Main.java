@@ -27,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fiveguys.trip_buddy_v0.main.ChatActivity;
+import com.example.fiveguys.trip_buddy_v0.utils.PreferenceUtils;
 import com.facebook.login.LoginManager;
 import com.facebook.share.model.ShareLinkContent;
 import com.google.android.gms.common.ConnectionResult;
@@ -36,6 +38,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.User;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -64,6 +70,11 @@ public class Main extends AppCompatActivity
             Users.child(uid).child("name").setValue(username);
             Users.child(uid).child("email").setValue(email);
 
+            //connect sendbird
+            PreferenceUtils.setUserId(Main.this, uid);
+            PreferenceUtils.setNickname(Main.this, username);
+
+            connectToSendBird(uid, username);
 
         } else {
             Intent intent = new Intent(getApplicationContext(), Login.class);
@@ -170,7 +181,8 @@ public class Main extends AppCompatActivity
         } else if (id == R.id.nav_tripHistory) {
 
         } else if (id == R.id.nav_chat) {
-
+            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_share) {
@@ -186,5 +198,80 @@ public class Main extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * Attempts to connect a user to SendBird.
+     * @param userId    The unique ID of the user.
+     * @param userNickname  The user's nickname, which will be displayed in chats.
+     */
+    private void connectToSendBird(final String userId, final String userNickname) {
+
+        SendBird.connect(userId, new SendBird.ConnectHandler() {
+            @Override
+            public void onConnected(User user, SendBirdException e) {
+
+                if (e != null) {
+                    // Error!
+                    Toast.makeText(
+                            Main.this, "" + e.getCode() + ": " + e.getMessage(),
+                            Toast.LENGTH_SHORT)
+                            .show();
+
+                    PreferenceUtils.setConnected(Main.this, false);
+                    return;
+                }
+
+                PreferenceUtils.setConnected(Main.this, true);
+
+                // Update the user's nickname
+                updateCurrentUserInfo(userNickname);
+                updateCurrentUserPushToken();
+
+            }
+        });
+    }
+
+    /**
+     * Update the user's push token.
+     */
+    private void updateCurrentUserPushToken() {
+        // Register Firebase Token
+        SendBird.registerPushTokenForCurrentUser(FirebaseInstanceId.getInstance().getToken(),
+                new SendBird.RegisterPushTokenWithStatusHandler() {
+                    @Override
+                    public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
+                        if (e != null) {
+                            // Error!
+                            Toast.makeText(Main.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        Toast.makeText(Main.this, "Push token registered.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
+     * Updates the user's nickname.
+     * @param userNickname  The new nickname of the user.
+     */
+    private void updateCurrentUserInfo(String userNickname) {
+        SendBird.updateCurrentUserInfo(userNickname, null, new SendBird.UserInfoUpdateHandler() {
+            @Override
+            public void onUpdated(SendBirdException e) {
+                if (e != null) {
+                    // Error!
+                    Toast.makeText(
+                            Main.this, "" + e.getCode() + ":" + e.getMessage(),
+                            Toast.LENGTH_SHORT)
+                            .show();
+
+
+                    return;
+                }
+
+            }
+        });
     }
 }

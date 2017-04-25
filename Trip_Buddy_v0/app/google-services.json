@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "196267666943-sb3mp42c0aqnbn4nmu1oredcpjdqi96r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fiveguys.trip_buddy_v0",
+            "certificate_hash": "65381561a2035d5e475578819834e5acabed84e2"
+          }
+        },
+        {
+          "client_id": "196267666943-4fj4veamot7spsakkbm86gk6osc3jbs9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fiveguys.trip_buddy_v0",
+            "certificate_hash": "1fac38705f7f6a518eef48622cfdffaa41bd8fe1"
+          }
+        },
+        {
           "client_id": "196267666943-io02kj14upard3nleeepmvcmn7nuaffs.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
