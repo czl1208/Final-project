@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -48,11 +49,19 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -75,6 +84,11 @@ public class NewTrip extends FragmentActivity
     private LatLng cLocation = new LatLng(0, 0);
     private LatLng sLocation = new LatLng(0, 0);;
     private CharSequence sPlace="None";
+    private FirebaseUser user;
+    private String uid;
+    private Uri photoUrl;
+    private DatabaseReference Users;
+    private StorageReference mStorageRef;
     private CharSequence sAddress;
     private String cAddress;
     private LatLngBounds sBound;
@@ -93,8 +107,12 @@ public class NewTrip extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        if (user != null) {
+            uid = user.getUid();
+        }
+        Users = FirebaseDatabase.getInstance().getReference().child("users");
         setContentView(R.layout.activity_new_trip);
         Destination = (TextView)findViewById(R.id.destination);
         Go = (Button) findViewById(R.id.Go);
@@ -136,6 +154,7 @@ public class NewTrip extends FragmentActivity
                     trip.child("destinationName").setValue(sPlace);
                     trip.child("destinationAddress").setValue(sAddress);
                     trip.child("destinationLocation").setValue(sLocation);
+                    trip.child("photoUrl").setValue(photoUrl.toString());
                     Toast toast = Toast.makeText(getApplicationContext(), "Your Jouney Begins", Toast.LENGTH_SHORT);
                     toast.show();
                     Intent intent = new Intent(getApplicationContext(), Main.class);
@@ -347,7 +366,39 @@ public class NewTrip extends FragmentActivity
             protected void onPostExecute(AttributedPhoto attributedPhoto) {
                 if (attributedPhoto != null) {
                     // Photo has been loaded, display it.
+
                     PlaceImage.setImageBitmap(attributedPhoto.bitmap);
+                    try {
+                        FileOutputStream fos = openFileOutput(sId+".png", Context.MODE_PRIVATE);
+
+                        attributedPhoto.bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                        String mypath = NewTrip.this.getFilesDir().getAbsolutePath()+"/"+sId+".png";
+
+                        Uri file = Uri.fromFile(new File(mypath));
+                        StorageReference profilesRef = mStorageRef.child(sId);
+
+                        profilesRef.putFile(file)
+                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        // Get a URL to the uploaded content
+                                        @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                      // Users.child("trips").child(sId).child("photoUrl").setValue(downloadUrl);
+                                        photoUrl = downloadUrl;
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        // Handle unsuccessful uploads
+                                        // ...
+                                    }
+                                });
+                        fos.close();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 //                    // Display the attribution as HTML content if set.
 //                    if (attributedPhoto.attribution == null) {
 //                        mText.setVisibility(View.GONE);
