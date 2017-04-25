@@ -275,7 +275,9 @@ public class Login extends AppCompatActivity implements
                         }else{
                             alert("Sign in successfully!");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            user.updateProfile(uprofile);
+                            if(user.getDisplayName() == null && user.getPhotoUrl()==null) {
+                                user.updateProfile(uprofile);
+                            }
 //                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
 //                                        @Override
 //                                        public void onComplete(@NonNull Task<Void> task) {
@@ -321,7 +323,9 @@ public class Login extends AppCompatActivity implements
                         }else{
                             alert("Sign in successfully!");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            user.updateProfile(uprofile);
+                            if(user.getDisplayName() == null && user.getPhotoUrl()==null) {
+                                user.updateProfile(uprofile);
+                            }
 //                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
 //                                        @Override
 //                                        public void onComplete(@NonNull Task<Void> task) {

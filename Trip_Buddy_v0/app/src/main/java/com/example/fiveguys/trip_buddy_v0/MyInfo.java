@@ -71,7 +71,11 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
             username = user.getDisplayName();
             email = user.getEmail();
             uid = user.getUid();
-            photoUrl = user.getPhotoUrl().toString();
+            if(user.getPhotoUrl()!=null) {
+                photoUrl = user.getPhotoUrl().toString();
+            }else{
+                photoUrl = "";
+            }
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference();
             DatabaseReference Users = myRef.child("users");
@@ -148,10 +152,10 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
         edtUserSex.setEnabled(false);
         edtUserAge.setEnabled(false);
         edtUserName.setEnabled(false);
-        if(username.length()>0){
+        if(username!=null){
             edtUserName.setText(username);
         }
-        if(photoUrl.length()>0){
+        if(photoUrl!=null){
             Picasso.with(getApplicationContext()).load(photoUrl.toString()).into(UserImage);
         }
 
