@@ -1,12 +1,14 @@
 package com.example.fiveguys.trip_buddy_v0;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -26,6 +30,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -42,6 +49,7 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
     private String userage;
     private String userfav;
     private String uid;
+    private StorageReference mStorageRef;
     private String photoUrl;
     private EditText edtUserName;
     private EditText edtUserSex;
@@ -58,6 +66,7 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         if (user != null) {
             username = user.getDisplayName();
             email = user.getEmail();
@@ -237,9 +246,46 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
                     Bundle extras = data.getExtras();
                     head = extras.getParcelable("data");
                     if (head != null) {
+                        UserImage.setImageBitmap(head);
+                        try {
+                            FileOutputStream fos = openFileOutput("Profile.png", Context.MODE_PRIVATE);
 
-                        setPicToView(head);
-                        iv_photo.setImageBitmap(head);
+                            head.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                            String mypath = MyInfo.this.getFilesDir().getAbsolutePath()+"/Profile.png";
+
+                            Uri file = Uri.fromFile(new File(mypath));
+                            StorageReference profilesRef = mStorageRef.child("images/Profile.png");
+
+                            profilesRef.putFile(file)
+                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            // Get a URL to the uploaded content
+
+
+                                            @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                            UserProfileChangeRequest profile = new UserProfileChangeRequest.Builder()
+                                                    .setPhotoUri(downloadUrl).build();
+                                            user.updateProfile(profile);
+
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception exception) {
+                                            // Handle unsuccessful uploads
+                                            // ...
+                                            alert("failed");
+                                        }
+                                    });
+                            fos.close();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+//                        setPicToView(head);
+//                        iv_photo.setImageBitmap(head);
                     }
                 }
                 break;
