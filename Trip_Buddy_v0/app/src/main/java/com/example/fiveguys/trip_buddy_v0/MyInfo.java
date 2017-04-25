@@ -221,14 +221,14 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    cropPhoto(data.getData());// 裁剪图片
+                    cropPhoto(data.getData());
                 }
 
                 break;
             case 2:
                 if (resultCode == RESULT_OK) {
                     File temp = new File(Environment.getExternalStorageDirectory() + "/head.jpg");
-                    cropPhoto(Uri.fromFile(temp));// 裁剪图片
+                    cropPhoto(Uri.fromFile(temp));
                 }
 
                 break;
@@ -237,11 +237,9 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
                     Bundle extras = data.getExtras();
                     head = extras.getParcelable("data");
                     if (head != null) {
-                        /**
-                         * 上传服务器代码
-                         */
-                        setPicToView(head);// 保存在SD卡中
-                        iv_photo.setImageBitmap(head);// 用ImageView显示出来
+
+                        setPicToView(head);
+                        iv_photo.setImageBitmap(head);
                     }
                 }
                 break;
@@ -253,7 +251,7 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
     }
 
     /**
-     * 调用系统的裁剪功能
+     *
      *
      * @param uri
      */
@@ -261,10 +259,8 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");
-        // aspectX aspectY 是宽高的比例
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
-        // outputX outputY 是裁剪图片宽高
         intent.putExtra("outputX", 150);
         intent.putExtra("outputY", 150);
         intent.putExtra("return-data", true);
@@ -273,21 +269,21 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
 
     private void setPicToView(Bitmap mBitmap) {
         String sdStatus = Environment.getExternalStorageState();
-        if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) { // 检测sd是否可用
+        if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) {
             return;
         }
         FileOutputStream b = null;
         File file = new File(path);
-        file.mkdirs();// 创建文件夹
-        String fileName = path + "head.jpg";// 图片名字
+        file.mkdirs();
+        String fileName = path + "head.jpg";
         try {
             b = new FileOutputStream(fileName);
-            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);// 把数据写入文件
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
-                // 关闭流
+
                 b.flush();
                 b.close();
             } catch (IOException e) {
