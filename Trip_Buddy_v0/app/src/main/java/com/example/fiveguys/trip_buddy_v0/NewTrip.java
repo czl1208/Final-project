@@ -144,6 +144,7 @@ public class NewTrip extends FragmentActivity
                 }
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
+                    //placePhotosTask();
                     String uid = user.getUid();
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference();
@@ -155,7 +156,7 @@ public class NewTrip extends FragmentActivity
                     trip.child("destinationAddress").setValue(sAddress);
                     trip.child("destinationLocation").setValue(sLocation);
                     trip.child("photoUrl").setValue(photoUrl.toString());
-                    Toast toast = Toast.makeText(getApplicationContext(), "Your Jouney Begins", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Your Jouney Begin", Toast.LENGTH_SHORT);
                     toast.show();
                     Intent intent = new Intent(getApplicationContext(), Main.class);
                     startActivity(intent);
@@ -375,7 +376,7 @@ public class NewTrip extends FragmentActivity
                         String mypath = NewTrip.this.getFilesDir().getAbsolutePath()+"/"+sId+".png";
 
                         Uri file = Uri.fromFile(new File(mypath));
-                        StorageReference profilesRef = mStorageRef.child(sId);
+                        StorageReference profilesRef = mStorageRef.child("placePhoto/"+sId+".png");
 
                         profilesRef.putFile(file)
                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -442,7 +443,7 @@ public class NewTrip extends FragmentActivity
                 PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
                 if (photoMetadataBuffer.getCount() > 0 && !isCancelled()) {
                     // Get the first bitmap and its attributions.
-                    PlacePhotoMetadata photo = photoMetadataBuffer.get(2);
+                    PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
                     CharSequence attribution = photo.getAttributions();
                     // Load a scaled bitmap for this photo.
                     Bitmap image = photo.getScaledPhoto(mGoogleApiClient, mWidth, mHeight).await()
