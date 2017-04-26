@@ -200,7 +200,6 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
             edtUserAge.setEnabled(true);
             txtEdit.setText("Update your profile");
         }
-
     }
     public void showTypeDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -350,7 +349,6 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
             case R.id.UserImag:
                 showTypeDialog();
                 break;
-
         }
     }
     public void alert(String s) {

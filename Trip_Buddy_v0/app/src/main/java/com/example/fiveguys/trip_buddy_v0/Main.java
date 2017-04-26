@@ -14,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -61,19 +60,15 @@ public class Main extends AppCompatActivity
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            //alert("haha");
-            //username = user.getDisplayName();
-//            alert(username);
+            username = user.getDisplayName();
             email = user.getEmail();
             uid = user.getUid();
             photoUrl = user.getPhotoUrl();
-            username = user.getDisplayName();
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference();
             DatabaseReference Users = myRef.child("users");
             Users.child(uid).child("name").setValue(username);
             Users.child(uid).child("email").setValue(email);
-<<<<<<< Updated upstream
 
             //connect sendbird
             PreferenceUtils.setUserId(Main.this, uid);
@@ -81,8 +76,6 @@ public class Main extends AppCompatActivity
 
             connectToSendBird(uid, username);
 
-=======
->>>>>>> Stashed changes
         } else {
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
@@ -133,6 +126,8 @@ public class Main extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+
+
     }
 
     @Override
@@ -204,7 +199,6 @@ public class Main extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-<<<<<<< Updated upstream
 
     /**
      * Attempts to connect a user to SendBird.
@@ -279,11 +273,5 @@ public class Main extends AppCompatActivity
 
             }
         });
-=======
-    public void alert(String s) {
-        Toast toast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
->>>>>>> Stashed changes
     }
 }
