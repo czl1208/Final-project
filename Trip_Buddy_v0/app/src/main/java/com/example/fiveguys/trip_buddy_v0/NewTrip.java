@@ -198,10 +198,11 @@ public class NewTrip extends FragmentActivity
                     trip.child("destinationAddress").setValue(sAddress);
                     trip.child("destinationLocation").setValue(sLocation);
                     trip.child("photoUrl").setValue(photoUrl.toString());
-                    Toast toast = Toast.makeText(getApplicationContext(), "Your Jouney Begin", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Your Jouney Begins", Toast.LENGTH_SHORT);
                     toast.show();
-                    Intent intent = new Intent(getApplicationContext(), Main.class);
-                    startActivity(intent);
+                    DesLayout = false;
+//                    Intent intent = new Intent(getApplicationContext(), Main.class);
+//                    startActivity(intent);
                     finish();
 
                 } else {
