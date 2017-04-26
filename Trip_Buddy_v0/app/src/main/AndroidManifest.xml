@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.fiveguys.trip_buddy_v0">
-    <!--<uses-permission android:name="android.permission.CAMERA" />-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
-    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />-->
+
+    <!-- <uses-permission android:name="android.permission.CAMERA" /> -->
+    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+    <!-- <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -15,7 +16,6 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
 
     <application
         android:name=".main.BaseApplication"
@@ -47,7 +47,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
             </intent-filter>
         </activity>
         <activity
@@ -74,12 +74,13 @@
         <activity
             android:name=".NewTrip"
             android:label="@string/title_activity_new_trip"
-            android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar"></activity>
+            android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar" />
         <activity
             android:name=".MyInfo"
             android:theme="@style/AppTheme.NoActionBar">
             >
         </activity>
+<<<<<<< Updated upstream
 
         <!--chat-->
         <activity android:name=".main.ChatActivity" />
@@ -100,6 +101,17 @@
             </intent-filter>
         </service>
 
+=======
+        <activity
+            android:name=".Splash"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+>>>>>>> Stashed changes
     </application>
 
 </manifest>
