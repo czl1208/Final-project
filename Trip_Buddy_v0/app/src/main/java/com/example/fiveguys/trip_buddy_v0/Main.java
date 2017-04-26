@@ -7,6 +7,7 @@ import android.location.Location;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,7 +25,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,17 +53,23 @@ import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
 
     String username, email, uid, age;
     Uri photoUrl;
+
     FirebaseDatabase database;
     DatabaseReference myRef;
     private static final String TAG = Main.class.getSimpleName();
-
-
+    String[] location;
+    DatabaseReference Users;
+    public List<String> tripref = new ArrayList<>();
+    public DatabaseReference trips;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +82,7 @@ public class Main extends AppCompatActivity
             photoUrl = user.getPhotoUrl();
             database = FirebaseDatabase.getInstance();
             myRef = database.getReference();
-            DatabaseReference Users = myRef.child("users");
+            Users = myRef.child("users");
             Users.child(uid).child("name").setValue(username);
             Users.child(uid).child("email").setValue(email);
 
@@ -82,16 +92,11 @@ public class Main extends AppCompatActivity
 
             connectToSendBird(uid, username);
 
-        } else {
-            Intent intent = new Intent(getApplicationContext(), Login.class);
-            startActivity(intent);
-            finish();
-        }
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -117,6 +122,51 @@ public class Main extends AppCompatActivity
         TextView nav_email = (TextView) header.findViewById(R.id.nav_email);
         ImageView nav_image = (ImageView) header.findViewById(R.id.nav_image);
 
+        trips = Users.child(uid).child("trips");
+
+        trips.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                //Log.e("Count " ,""+snapshot.getChildrenCount());
+//                alert(snapshot.getValue(String.class));
+                List<String> LocationImage = new ArrayList<>();
+                List<String> Location = new ArrayList<>();
+                for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+                    for(DataSnapshot postSnapshot2: postSnapshot.getChildren()){
+                        //alert(postSnapshot2.getKey());
+                        LocationImage.add(postSnapshot2.child("photoUrl").getValue(String.class));
+                        Location.add(postSnapshot2.child("destinationName").getValue(String.class));
+                    }
+                }
+                if(Location.size()>0) {
+                    location = new String[Location.size()];
+                    int i=0;
+                    for(String s : Location){
+                        location[i] = s;
+                        i++;
+                    }
+
+                    customList adapter = new customList(Main.this, location, LocationImage);
+                    ListView list = (ListView) findViewById(R.id.listView);
+                    list.setAdapter(adapter);
+                    list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view,
+                                                int position, long id) {
+                            Toast.makeText(Main.this, "You Clicked at " + location[position++], Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         nav_name.setText(username);
         myRef.child("users").child(uid).child("age").addValueEventListener(new ValueEventListener() {
             @Override
@@ -140,10 +190,58 @@ public class Main extends AppCompatActivity
         if(photoUrl != null) {
             Picasso.with(getApplicationContext()).load(photoUrl.toString()).into(nav_image);
         }
+    } else {
+    Intent intent = new Intent(getApplicationContext(), Login.class);
+    startActivity(intent);
+    finish();
+}
        // nav_image.setImageURI(photoUrl);
-
-
     }
+//    public void helper(List<String> tripref){
+//        //alert(String.valueOf(tripref.size()));
+//        for(String tref : tripref){
+//            DatabaseReference trip = trips.child(tref).child("photoUrl");
+//
+//            trip.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot snapshot) {
+//                    Log.e("Count " ,""+snapshot.getChildrenCount());
+//                   sendString(snapshot.getValue(String.class));
+//                    //alert(snapshot.getValue(String.class));
+//                    //LocationImage.add(snapshot.getValue(String.class));
+//
+//                    //alert(String.valueOf(LocationImage.size()));
+//
+//                }
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//
+//                }
+//            });
+//
+//        }
+//    }
+//    public void sendString(String s){
+//        LocationImage.add(s);
+//
+//            if (!LocationImage.isEmpty()) {
+//                customList adapter = new customList(Main.this, location, LocationImage);
+//                ListView list = (ListView) findViewById(R.id.listView);
+//                list.setAdapter(adapter);
+//                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view,
+//                                            int position, long id) {
+//                        Toast.makeText(Main.this, "You Clicked at " + location[position++], Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                });
+//            } else {
+//                //alert("NO Picture");
+//            }
+//        }
+
 
     @Override
     protected void onStart() {
@@ -295,5 +393,10 @@ public class Main extends AppCompatActivity
 
             }
         });
+    }
+    public void alert(String s) {
+        Toast toast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 }
