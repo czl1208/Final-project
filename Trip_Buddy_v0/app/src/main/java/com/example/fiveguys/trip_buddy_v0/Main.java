@@ -36,8 +36,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -50,8 +53,11 @@ public class Main extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
 
-    String username, email, uid;
+    String username, email, uid, age;
     Uri photoUrl;
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    private static final String TAG = Main.class.getSimpleName();
 
 
     @Override
@@ -64,8 +70,8 @@ public class Main extends AppCompatActivity
             email = user.getEmail();
             uid = user.getUid();
             photoUrl = user.getPhotoUrl();
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference();
+            database = FirebaseDatabase.getInstance();
+            myRef = database.getReference();
             DatabaseReference Users = myRef.child("users");
             Users.child(uid).child("name").setValue(username);
             Users.child(uid).child("email").setValue(email);
@@ -81,7 +87,6 @@ public class Main extends AppCompatActivity
             startActivity(intent);
             finish();
         }
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -108,11 +113,28 @@ public class Main extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header=navigationView.getHeaderView(0);
-        TextView nav_name = (TextView) header.findViewById(R.id.nav_name);
+        final TextView nav_name = (TextView) header.findViewById(R.id.nav_name);
         TextView nav_email = (TextView) header.findViewById(R.id.nav_email);
         ImageView nav_image = (ImageView) header.findViewById(R.id.nav_image);
 
         nav_name.setText(username);
+        myRef.child("users").child(uid).child("age").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                if(dataSnapshot.exists()) {
+                    age = dataSnapshot.getValue(String.class);
+                    nav_name.setText(username + ", " + age);
+                    Log.d(TAG, "Age is: " + age);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
         if(email != null)
         nav_email.setText(email);
         if(photoUrl != null) {
