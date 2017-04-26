@@ -65,8 +65,14 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+
+import static com.google.android.gms.R.id.url;
 
 public class NewTrip extends FragmentActivity
         implements OnMapReadyCallback,
@@ -84,6 +90,7 @@ public class NewTrip extends FragmentActivity
     private static final String TAG = NewTrip.class.getSimpleName();
     private Location mLastKnownLocation;
     private LatLng cLocation = new LatLng(0, 0);
+    private LatLng startLocation = new LatLng(0, 0);
     private LatLng sLocation = new LatLng(0, 0);;
     private CharSequence sPlace="None";
     private FirebaseUser user;
@@ -92,7 +99,7 @@ public class NewTrip extends FragmentActivity
     private DatabaseReference Users;
     private StorageReference mStorageRef;
     private CharSequence sAddress;
-    private String cAddress;
+    private String cAddress, startAddress;
     private LatLngBounds sBound, cBound;
     private String cPlaceNames, cPlaceid, cPlaceAddresses,cPlaceAttributions;
     private LatLng cPlaceLatLngs;
@@ -111,7 +118,9 @@ public class NewTrip extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            DesLayout = savedInstanceState.getBoolean("message");
+            DesLayout = savedInstanceState.getBoolean("DesLayout");
+            startAddress = savedInstanceState.getString("cAddress");
+            startLocation = new LatLng(savedInstanceState.getDouble("startLat"),savedInstanceState.getDouble("startLong"));
         }
         user = FirebaseAuth.getInstance().getCurrentUser();
         mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -152,7 +161,10 @@ public class NewTrip extends FragmentActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean("message", DesLayout);
+        outState.putBoolean("DesLayout", DesLayout);
+        outState.putString("cAddress", cAddress);
+        outState.putDouble("startLong", cLocation.longitude);
+        outState.putDouble("startLat", cLocation.latitude);
         super.onSaveInstanceState(outState);
     }
 
@@ -189,15 +201,20 @@ public class NewTrip extends FragmentActivity
                     //placePhotosTask();
                     String uid = user.getUid();
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference();
-                    DatabaseReference Users = myRef.child("users");
-                    DatabaseReference trip = Users.child(uid).child("trips").child(sId);
-                    trip.child("startAddress").setValue(cAddress);
-                    trip.child("startLocation").setValue(cLocation);
+                    DateFormat df = new SimpleDateFormat("MM_dd_yy");
+                    Date dateobj = new Date();
+                    String timestamp = df.format(dateobj);
+                    startAddress = startAddress.replace("\n", ", ");
+                    DatabaseReference newTrip = database.getReference("/trips/"+sId);
+                    newTrip.child(startAddress).child(uid).setValue(true);
+                    DatabaseReference trip = database.getReference("/users/"+uid+"/trips/"+sId+"/"+timestamp);
+                    trip.child("startAddress").setValue(startAddress);
+                    trip.child("startLocation").setValue(startLocation);
                     trip.child("destinationName").setValue(sPlace);
                     trip.child("destinationAddress").setValue(sAddress);
                     trip.child("destinationLocation").setValue(sLocation);
                     trip.child("photoUrl").setValue(photoUrl.toString());
+                    trip.child("activity").setValue(true);
                     Toast toast = Toast.makeText(getApplicationContext(), "Your Jouney Begins", Toast.LENGTH_SHORT);
                     toast.show();
                     DesLayout = false;
@@ -281,6 +298,7 @@ public class NewTrip extends FragmentActivity
                 Context context = getApplicationContext();
                 CharSequence text = "place not found";
                 Toast toast = Toast.makeText(context,text,Toast.LENGTH_SHORT);
+                toast.show();
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
@@ -434,52 +452,63 @@ public class NewTrip extends FragmentActivity
         }
     }
 
-    private void placePhotosTask() {// Australian Cruise Group
-
-        // Create a new AsyncTask that displays the bitmap and attribution once loaded.
-        new PhotoTask(PlaceImage.getWidth(), PlaceImage.getHeight()) {
+    private void placePhotosTask() {
+        mStorageRef.child("placePhoto/"+sId+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
-            protected void onPreExecute() {
-                // Display a temporary image to show while bitmap is loading.
-                PlaceImage.setImageResource(R.drawable.logo_white_outline);
+            public void onSuccess(Uri uri) {
+                photoUrl = uri;
+//                Toast toast = Toast.makeText(getApplicationContext(),"found",Toast.LENGTH_SHORT);
+//                toast.show();
+                return;
             }
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            protected void onPostExecute(AttributedPhoto attributedPhoto) {
-                if (attributedPhoto != null) {
-                    // Photo has been loaded, display it.
-
-                    PlaceImage.setImageBitmap(attributedPhoto.bitmap);
-                    try {
-                        FileOutputStream fos = openFileOutput(sId+".png", Context.MODE_PRIVATE);
-
-                        attributedPhoto.bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                        String mypath = NewTrip.this.getFilesDir().getAbsolutePath()+"/"+sId+".png";
-
-                        Uri file = Uri.fromFile(new File(mypath));
-                        StorageReference profilesRef = mStorageRef.child("placePhoto/"+sId+".png");
-
-                        profilesRef.putFile(file)
-                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        // Get a URL to the uploaded content
-                                        @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                      // Users.child("trips").child(sId).child("photoUrl").setValue(downloadUrl);
-                                        photoUrl = downloadUrl;
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception exception) {
-                                        // Handle unsuccessful uploads
-                                        // ...
-                                    }
-                                });
-                        fos.close();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            public void onFailure(@NonNull Exception exception) {
+                new PhotoTask(PlaceImage.getWidth(), PlaceImage.getHeight()) {
+                    @Override
+                    protected void onPreExecute() {
+                        // Display a temporary image to show while bitmap is loading.
+                        PlaceImage.setImageResource(R.drawable.logo_white_outline);
                     }
+
+                    @Override
+                    protected void onPostExecute(AttributedPhoto attributedPhoto) {
+                        if (attributedPhoto != null) {
+                            // Photo has been loaded, display it.
+
+                            PlaceImage.setImageBitmap(attributedPhoto.bitmap);
+                            try {
+                                FileOutputStream fos = openFileOutput(sId + ".png", Context.MODE_PRIVATE);
+
+                                attributedPhoto.bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                                String mypath = NewTrip.this.getFilesDir().getAbsolutePath() + "/" + sId + ".png";
+
+                                Uri file = Uri.fromFile(new File(mypath));
+                                StorageReference profilesRef = mStorageRef.child("placePhoto/" + sId + ".png");
+
+                                profilesRef.putFile(file)
+                                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                // Get a URL to the uploaded content
+                                                @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                                // Users.child("trips").child(sId).child("photoUrl").setValue(downloadUrl);
+                                                photoUrl = downloadUrl;
+                                            }
+                                        })
+
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception exception) {
+                                                // Handle unsuccessful uploads
+                                                // ...
+                                            }
+                                        });
+                                fos.close();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 //                    // Display the attribution as HTML content if set.
 //                    if (attributedPhoto.attribution == null) {
 //                        mText.setVisibility(View.GONE);
@@ -488,9 +517,11 @@ public class NewTrip extends FragmentActivity
 //                        mText.setText(Html.fromHtml(attributedPhoto.attribution.toString()));
 //                    }
 
-                }
+                        }
+                    }
+                }.execute(sId);
             }
-        }.execute(sId);
+        });
     }
 
     abstract class PhotoTask extends AsyncTask<String, Void, com.example.fiveguys.trip_buddy_v0.NewTrip.PhotoTask.AttributedPhoto> {
