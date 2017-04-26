@@ -1,5 +1,6 @@
 package com.example.fiveguys.trip_buddy_v0;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,14 +93,15 @@ public class NewTrip extends FragmentActivity
     private StorageReference mStorageRef;
     private CharSequence sAddress;
     private String cAddress;
-    private LatLngBounds sBound;
+    private LatLngBounds sBound, cBound;
     private String cPlaceNames, cPlaceid, cPlaceAddresses,cPlaceAttributions;
     private LatLng cPlaceLatLngs;
+    private boolean DesLayout;
 
     private String sCity;
     private String sId;
-    private TextView Destination;
-    private Button Go;
+    private TextView Destination, Start;
+    private Button Go, Next;
     private ImageView PlaceImage;
 
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -107,17 +110,54 @@ public class NewTrip extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            DesLayout = savedInstanceState.getBoolean("message");
+        }
         user = FirebaseAuth.getInstance().getCurrentUser();
         mStorageRef = FirebaseStorage.getInstance().getReference();
         if (user != null) {
             uid = user.getUid();
         }
         Users = FirebaseDatabase.getInstance().getReference().child("users");
-        setContentView(R.layout.activity_new_trip);
-        Destination = (TextView)findViewById(R.id.destination);
-        Go = (Button) findViewById(R.id.Go);
-        PlaceImage = (ImageView) findViewById(R.id.placeImage);
 
+        if(DesLayout) {
+           loadDesLayout();
+        }else {
+            setContentView(R.layout.activity_new_trip_start);
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this /* FragmentActivity */,
+                            this /* OnConnectionFailedListener */)
+                    .addConnectionCallbacks(this)
+                    .addApi(LocationServices.API)
+                    .addApi(Places.GEO_DATA_API)
+                    .addApi(Places.PLACE_DETECTION_API)
+                    .build();
+            mGoogleApiClient.connect();
+            DesLayout = false;
+            Start = (TextView) findViewById(R.id.start);
+
+            Next = (Button) findViewById(R.id.Next);
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
+            Next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DesLayout = true;
+                    recreate();
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("message", DesLayout);
+        super.onSaveInstanceState(outState);
+    }
+
+    private void loadDesLayout(){
+        setContentView(R.layout.activity_new_trip);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */,
                         this /* OnConnectionFailedListener */)
@@ -127,7 +167,9 @@ public class NewTrip extends FragmentActivity
                 .addApi(Places.PLACE_DETECTION_API)
                 .build();
         mGoogleApiClient.connect();
-
+        Destination = (TextView)findViewById(R.id.destination);
+        Go = (Button) findViewById(R.id.Go);
+        PlaceImage = (ImageView) findViewById(R.id.placeImage);
         //getActionBar().hide();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -163,13 +205,16 @@ public class NewTrip extends FragmentActivity
                     finish();
 
                 } else {
+                    DesLayout = false;
                     Intent intent = new Intent(getApplicationContext(), Login.class);
                     startActivity(intent);
                     finish();
                 }
             }
         });
+
     }
+
 
     @Override
     public void onConnected(Bundle connectionHint) {
@@ -187,15 +232,48 @@ public class NewTrip extends FragmentActivity
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
+
             public void onPlaceSelected(Place place) {
-                sPlace = place.getName();
-                sLocation = place.getLatLng();
-                sId = place.getId();
-                sAddress = place.getAddress();
-                sLocation = place.getLatLng();
-                sBound = place.getViewport();
-                showLocation();
-                Log.i(TAG, "Place: " + place.getName());
+                if(DesLayout) {
+                    sPlace = place.getName();
+                    sLocation = place.getLatLng();
+                    sId = place.getId();
+                    sAddress = place.getAddress();
+                    sLocation = place.getLatLng();
+                    sBound = place.getViewport();
+                    showLocation();
+                    Log.i(TAG, "Place: " + place.getName());
+                }else{
+                    cLocation = place.getLatLng();
+                    cBound = place.getViewport();
+                    StringBuffer address = new StringBuffer();
+                    StringBuffer address1 = new StringBuffer();
+                    StringBuffer address2 = new StringBuffer();
+                    Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+                    List<Address> addresses;
+                    try {
+                        addresses = gcd.getFromLocation(cLocation.latitude, cLocation.longitude, 1);
+
+                        if (addresses.size() > 0)
+                            System.out.println(addresses.get(0).getLocality());
+                        address.append(addresses.get(0).getAddressLine(1)).append("\n")
+                                .append(addresses.get(0).getAddressLine(2));
+                        address1.append(addresses.get(0).getAddressLine(1));
+                        address2.append(addresses.get(0).getAddressLine(2));
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    cAddress = address.toString();
+                    mMap.clear();
+                    mMap.addMarker(new MarkerOptions()
+                            .title(address1.toString())
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_person_pin))
+                            .position(cLocation)
+                            .snippet(address2.toString()));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(cBound,10));
+                    Start.setText(address1);
+                }
             }
             @Override
             public void onError(Status status) {
@@ -265,7 +343,7 @@ public class NewTrip extends FragmentActivity
             showCurrentPlace();
         }else{
             Log.d(TAG, "Current location is null. Using defaults.");
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
 //
@@ -347,6 +425,9 @@ public class NewTrip extends FragmentActivity
                     .position(cLocation)
                     .snippet(address2.toString()));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cLocation, DEFAULT_ZOOM));
+            if(!DesLayout) {
+                Start.setText(address1);
+            }
         } else {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation));
         }
@@ -361,8 +442,6 @@ public class NewTrip extends FragmentActivity
                 // Display a temporary image to show while bitmap is loading.
                 PlaceImage.setImageResource(R.drawable.logo_white_outline);
             }
-
-
             @Override
             protected void onPostExecute(AttributedPhoto attributedPhoto) {
                 if (attributedPhoto != null) {
@@ -423,7 +502,6 @@ public class NewTrip extends FragmentActivity
             mHeight = height;
             mWidth = width;
         }
-
         /**
          * Loads the first photo for a place id from the Geo Data API.
          * The place id must be the first (and only) parameter.

@@ -64,22 +64,22 @@
             android:layout_row="0"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:text="Destination"
+            android:text="Start"
             android:gravity="center"
             android:layout_weight="2"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/WordDark"
+            android:textColor="@color/cardview_light_background"
             />
 
 
         <TextView
-            android:id="@+id/destination"
+            android:id="@+id/start"
             android:layout_column="1"
             android:layout_row="1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:text="Search A City to Begin"
+            android:text=""
             android:layout_weight="4"
             android:gravity="center|top"
             android:layout_gravity="top"
@@ -91,10 +91,10 @@
             />
 
         <Button
-            android:id="@+id/Go"
+            android:id="@+id/Next"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:text="GO!"
+            android:text="NEXT"
             android:layout_gravity="center"
             android:gravity="center"
             android:textSize="30sp"
@@ -110,17 +110,6 @@
 
 
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/placeImage"
-        android:layout_width="160dp"
-        android:layout_height="120dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="145dp"
-        android:layout_marginLeft="@dimen/map_margin"
-
-
-        android:scaleType="fitEnd" />
 
 
     <!--</LinearLayout>-->
