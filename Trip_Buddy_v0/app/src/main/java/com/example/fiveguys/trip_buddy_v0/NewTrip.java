@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -110,6 +111,7 @@ public class NewTrip extends FragmentActivity
     private TextView Destination, Start;
     private Button Go, Next;
     private ImageView PlaceImage;
+    Typeface athletic_font;
 
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
@@ -117,6 +119,7 @@ public class NewTrip extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        athletic_font = Typeface.createFromAsset(getAssets(), "fonts/athletic.ttf");
         if (savedInstanceState != null) {
             DesLayout = savedInstanceState.getBoolean("DesLayout");
             startAddress = savedInstanceState.getString("cAddress");
@@ -146,6 +149,7 @@ public class NewTrip extends FragmentActivity
             Start = (TextView) findViewById(R.id.start);
 
             Next = (Button) findViewById(R.id.Next);
+            Next.setTypeface(athletic_font);
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
@@ -181,6 +185,7 @@ public class NewTrip extends FragmentActivity
         mGoogleApiClient.connect();
         Destination = (TextView)findViewById(R.id.destination);
         Go = (Button) findViewById(R.id.Go);
+        Go.setTypeface(athletic_font);
         PlaceImage = (ImageView) findViewById(R.id.placeImage);
         //getActionBar().hide();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -206,6 +211,7 @@ public class NewTrip extends FragmentActivity
                     String timestamp = df.format(dateobj);
                     startAddress = startAddress.replace("\n", ", ");
                     DatabaseReference newTrip = database.getReference("/trips/"+sId);
+                    //placePhotosTask();
                     newTrip.child(startAddress).child(uid).setValue(true);
                     DatabaseReference trip = database.getReference("/users/"+uid+"/trips/"+sId+"/"+timestamp);
                     trip.child("startAddress").setValue(startAddress);
@@ -243,11 +249,11 @@ public class NewTrip extends FragmentActivity
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
-        autocompleteFragment.setFilter(new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_REGIONS)
-                .build());
-
+                if(DesLayout) {
+                    autocompleteFragment.setFilter(new AutocompleteFilter.Builder()
+                            .setTypeFilter(AutocompleteFilter.TYPE_FILTER_REGIONS)
+                            .build());
+                }
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
 
@@ -365,19 +371,6 @@ public class NewTrip extends FragmentActivity
             mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
-//
-//        // Set the map's camera position to the current location of the device.
-//        if (mCameraPosition != null) {
-//            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
-//        } else if (mLastKnownLocation != null) {
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-//                    new LatLng(mLastKnownLocation.getLatitude(),
-//                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-//        } else {
-//            Log.d(TAG, "Current location is null. Using defaults.");
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
-//            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-//        }
     }
 
     /**
@@ -464,11 +457,11 @@ public class NewTrip extends FragmentActivity
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                new PhotoTask(PlaceImage.getWidth(), PlaceImage.getHeight()) {
+                new PhotoTask(R.dimen.photo_height*2, R.dimen.photo_height) {
                     @Override
                     protected void onPreExecute() {
                         // Display a temporary image to show while bitmap is loading.
-                        PlaceImage.setImageResource(R.drawable.logo_white_outline);
+                       // PlaceImage.setImageResource(R.drawable.logo_white_outline);
                     }
 
                     @Override
@@ -476,7 +469,7 @@ public class NewTrip extends FragmentActivity
                         if (attributedPhoto != null) {
                             // Photo has been loaded, display it.
 
-                            PlaceImage.setImageBitmap(attributedPhoto.bitmap);
+                           // PlaceImage.setImageBitmap(attributedPhoto.bitmap);
                             try {
                                 FileOutputStream fos = openFileOutput(sId + ".png", Context.MODE_PRIVATE);
 
@@ -585,15 +578,15 @@ public class NewTrip extends FragmentActivity
     }
 
         private void showLocation(){
-        mMap.clear();
-        mMap.addMarker(new MarkerOptions()
+            mMap.clear();
+            mMap.addMarker(new MarkerOptions()
                 .title((String)sPlace)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_orange_arrow))
                 .position(sLocation)
                 .snippet((String)sAddress));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(sBound,10));
-        Destination.setText(sAddress);
-        placePhotosTask();
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(sBound,10));
+            Destination.setText(sAddress);
+            placePhotosTask();
     }
     public boolean onMyLocationButtonClick() {
         getDeviceLocation();

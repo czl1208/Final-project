@@ -8,8 +8,10 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.provider.SearchRecentSuggestions;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
@@ -67,12 +69,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ImageLoad extends BaseAdapter{
+import org.w3c.dom.Text;
+
+import static java.security.AccessController.getContext;
+
+
+public class ImageLoad extends BaseAdapter {
     private Context mContext;
     private String[] images2;
     private String[] descriptions2;
-    public ImageLoad(Context c,List<String> images,List<String> descriptions ) {
+    private int matchNum;
+    public ImageLoad(Context c,List<String> images,List<String> descriptions, int match ) {
         mContext = c;
+        matchNum = match;
         descriptions2 = new String[descriptions.size()];
         images2 = new String[images.size()];
         for (int i=0;i<descriptions.size(); i++) {
@@ -123,8 +132,11 @@ public class ImageLoad extends BaseAdapter{
         }
         TextView textView = (TextView) grid.findViewById(R.id.textView);
         ImageView imageView = (ImageView)grid.findViewById(R.id.imageView);
+        TextView matchNumber = (TextView) grid.findViewById(R.id.matchNumber);
+
         System.out.println("On getview" + descriptions2.toString() + "position" + position);
-        textView.setText(String.valueOf(position)+  " "+descriptions2[position]);
+        textView.setText(descriptions2[position]);
+        matchNumber.setText(matchNum+"");
         try{
             Picasso.with(mContext).load(images2[position]).into(imageView);
         } catch (Exception e) {

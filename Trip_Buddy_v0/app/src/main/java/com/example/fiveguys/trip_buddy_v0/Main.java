@@ -35,6 +35,8 @@ import com.facebook.share.model.ShareLinkContent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +45,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
@@ -63,6 +67,7 @@ public class Main extends AppCompatActivity
     Uri photoUrl;
     FirebaseDatabase database;
     DatabaseReference myRef;
+    StorageReference mStorageRef;
     List<String> urilist, destinations;
     List<String> matches;
     GridView grid;
@@ -85,6 +90,7 @@ public class Main extends AppCompatActivity
             photoUrl = user.getPhotoUrl();
             database = FirebaseDatabase.getInstance();
             myRef = database.getReference();
+            mStorageRef = FirebaseStorage.getInstance().getReference();
             DatabaseReference Users = myRef.child("users");
             Users.child(uid).child("name").setValue(username);
             Users.child(uid).child("email").setValue(email);
@@ -137,8 +143,10 @@ public class Main extends AppCompatActivity
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         urilist.clear();
                         destinations.clear();
+
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             for (DataSnapshot sp : snapshot.getChildren()) {
+
                                 String url = sp.child("photoUrl").getValue(String.class);
                                 String des = sp.child("destinationName").getValue(String.class);
                                 String strt = sp.child("startAddress").getValue(String.class);
@@ -153,7 +161,7 @@ public class Main extends AppCompatActivity
                                 destinations.add(des);
                             }
                         }
-                        ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations);
+                        ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, 0);
                         grid=(GridView)findViewById(R.id.gridview);
                         grid.setAdapter(adapter);
                         for (String key : hm.keySet()) {
@@ -189,15 +197,13 @@ public class Main extends AppCompatActivity
                                     list.add(snapshot.getKey());
                                     hm.put(key,list);
                                 }
-
                             }
-
                         }
-
                     }
                 }
                 System.out.println("LINE 182" + Arrays.asList(hm)); // method 1
-                ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations);
+                int matchNum = hm.size();
+                ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, matchNum);
                 grid=(GridView)findViewById(R.id.gridview);
                 grid.setAdapter(adapter);
             }
@@ -206,6 +212,7 @@ public class Main extends AppCompatActivity
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
 
         // pass matches to it
 

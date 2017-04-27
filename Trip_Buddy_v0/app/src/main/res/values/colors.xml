@@ -45,4 +45,8 @@
     <color name="groupChannelUnreadCountText">#ffffff</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="photo_tint_white">#34ffffff</color>
+    <color name="photo_tint_black">#4b000000</color>
+
 </resources>
