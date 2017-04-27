@@ -146,7 +146,7 @@ public class Main extends AppCompatActivity
 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             for (DataSnapshot sp : snapshot.getChildren()) {
-
+                                snapshot.getKey();
                                 String url = sp.child("photoUrl").getValue(String.class);
                                 String des = sp.child("destinationName").getValue(String.class);
                                 String strt = sp.child("startAddress").getValue(String.class);

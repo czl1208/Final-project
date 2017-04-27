@@ -210,6 +210,7 @@ public class NewTrip extends FragmentActivity
                     Date dateobj = new Date();
                     String timestamp = df.format(dateobj);
                     startAddress = startAddress.replace("\n", ", ");
+                    startAddress = startAddress.replace("[^A-Za-Z]","");
                     DatabaseReference newTrip = database.getReference("/trips/"+sId);
                     //placePhotosTask();
                     newTrip.child(startAddress).child(uid).setValue(true);
@@ -296,7 +297,9 @@ public class NewTrip extends FragmentActivity
                             .position(cLocation)
                             .snippet(address2.toString()));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(cBound,10));
-                    Start.setText(address1);
+                    String address11 = address1.toString();
+                    address11 = address11.replace("[^A-Za-Z]","");
+                    Start.setText(address11);
                 }
             }
             @Override
@@ -438,7 +441,9 @@ public class NewTrip extends FragmentActivity
                     .snippet(address2.toString()));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cLocation, DEFAULT_ZOOM));
             if(!DesLayout) {
-                Start.setText(address1);
+                String address11 = address1.toString();
+                address11 = address11.replace("[^A-Za-Z]","");
+                Start.setText(address11);
             }
         } else {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation));
