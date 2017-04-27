@@ -7,7 +7,6 @@ import android.location.Location;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,9 +23,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +51,8 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Main extends AppCompatActivity
@@ -62,19 +61,23 @@ public class Main extends AppCompatActivity
 
     String username, email, uid, age;
     Uri photoUrl;
-
     FirebaseDatabase database;
     DatabaseReference myRef;
+    List<String> urilist, destinations;
+    List<String> matches;
+    GridView grid;
+    HashMap<String, List<String>> hm;
     private static final String TAG = Main.class.getSimpleName();
-    String[] location;
-    DatabaseReference Users;
-    public List<String> tripref = new ArrayList<>();
-    public DatabaseReference trips;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        urilist = new ArrayList<>();
+        destinations = new ArrayList<>();
+
         if (user != null) {
             username = user.getDisplayName();
             email = user.getEmail();
@@ -82,7 +85,7 @@ public class Main extends AppCompatActivity
             photoUrl = user.getPhotoUrl();
             database = FirebaseDatabase.getInstance();
             myRef = database.getReference();
-            Users = myRef.child("users");
+            DatabaseReference Users = myRef.child("users");
             Users.child(uid).child("name").setValue(username);
             Users.child(uid).child("email").setValue(email);
 
@@ -92,11 +95,16 @@ public class Main extends AppCompatActivity
 
             connectToSendBird(uid, username);
 
-
+        } else {
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            startActivity(intent);
+            finish();
+        }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
+
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -122,49 +130,84 @@ public class Main extends AppCompatActivity
         TextView nav_email = (TextView) header.findViewById(R.id.nav_email);
         ImageView nav_image = (ImageView) header.findViewById(R.id.nav_image);
 
-        trips = Users.child(uid).child("trips");
+        hm = new HashMap<>();
+        myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener
+                                                                                       () {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        urilist.clear();
+                        destinations.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            for (DataSnapshot sp : snapshot.getChildren()) {
+                                String url = sp.child("photoUrl").getValue(String.class);
+                                String des = sp.child("destinationName").getValue(String.class);
+                                String strt = sp.child("startAddress").getValue(String.class);
+                                String dest = sp.child("destinationAddress").getValue(String.class);
+                                String key = strt + dest;
+                                Log.i("Key", key);
+                                if (!hm.containsKey(key)) {
+                                    System.out.println("++++++++++++++++++++++++++++=");
+                                    hm.put(key, new ArrayList<String>());
+                                }
+                                urilist.add(url);
+                                destinations.add(des);
+                            }
+                        }
+                        ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations);
+                        grid=(GridView)findViewById(R.id.gridview);
+                        grid.setAdapter(adapter);
+                        for (String key : hm.keySet()) {
+                            Log.d("Keyset", key);
+                        }
+                    }
 
-        trips.addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+
+
+        myRef.child("users").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                //Log.e("Count " ,""+snapshot.getChildrenCount());
-//                alert(snapshot.getValue(String.class));
-                List<String> LocationImage = new ArrayList<>();
-                List<String> Location = new ArrayList<>();
-                for (DataSnapshot postSnapshot: snapshot.getChildren()) {
-                    for(DataSnapshot postSnapshot2: postSnapshot.getChildren()){
-                        //alert(postSnapshot2.getKey());
-                        LocationImage.add(postSnapshot2.child("photoUrl").getValue(String.class));
-                        Location.add(postSnapshot2.child("destinationName").getValue(String.class));
-                    }
-                }
-                if(Location.size()>0) {
-                    location = new String[Location.size()];
-                    int i=0;
-                    for(String s : Location){
-                        location[i] = s;
-                        i++;
-                    }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Log.d("HashMap", snapshot.getKey());
+                    for (DataSnapshot sp : snapshot.getChildren()) { // for each user
 
-                    customList adapter = new customList(Main.this, location, LocationImage);
-                    ListView list = (ListView) findViewById(R.id.listView);
-                    list.setAdapter(adapter);
-                    list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        for (DataSnapshot sp2 : sp.getChildren()) {
+                            for (DataSnapshot sp3 : sp2.getChildren()) {
+//                                Log.d("EACH TRIP", sp3.getKey());
+                                String start = sp3.child("startAddress").getValue(String.class);
+                                String end = sp3.child("destinationAddress").getValue(String.class);
+                                String key = start+end;
+//                                Log.i("KeyNew", key);
+                                System.out.println("Line 175" + key);
+                                if (hm.containsKey(key)) {
+                                    List<String> list = hm.get(key);
+                                    list.add(snapshot.getKey());
+                                    hm.put(key,list);
+                                }
 
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view,
-                                                int position, long id) {
-                            Toast.makeText(Main.this, "You Clicked at " + location[position++], Toast.LENGTH_SHORT).show();
+                            }
 
                         }
-                    });
+
+                    }
                 }
+                System.out.println("LINE 182" + Arrays.asList(hm)); // method 1
+                ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations);
+                grid=(GridView)findViewById(R.id.gridview);
+                grid.setAdapter(adapter);
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
+
+        // pass matches to it
 
 
         nav_name.setText(username);
@@ -190,64 +233,14 @@ public class Main extends AppCompatActivity
         if(photoUrl != null) {
             Picasso.with(getApplicationContext()).load(photoUrl.toString()).into(nav_image);
         }
-    } else {
-    Intent intent = new Intent(getApplicationContext(), Login.class);
-    startActivity(intent);
-    finish();
-}
        // nav_image.setImageURI(photoUrl);
-    }
-//    public void helper(List<String> tripref){
-//        //alert(String.valueOf(tripref.size()));
-//        for(String tref : tripref){
-//            DatabaseReference trip = trips.child(tref).child("photoUrl");
-//
-//            trip.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot snapshot) {
-//                    Log.e("Count " ,""+snapshot.getChildrenCount());
-//                   sendString(snapshot.getValue(String.class));
-//                    //alert(snapshot.getValue(String.class));
-//                    //LocationImage.add(snapshot.getValue(String.class));
-//
-//                    //alert(String.valueOf(LocationImage.size()));
-//
-//                }
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            });
-//
-//        }
-//    }
-//    public void sendString(String s){
-//        LocationImage.add(s);
-//
-//            if (!LocationImage.isEmpty()) {
-//                customList adapter = new customList(Main.this, location, LocationImage);
-//                ListView list = (ListView) findViewById(R.id.listView);
-//                list.setAdapter(adapter);
-//                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//                    @Override
-//                    public void onItemClick(AdapterView<?> parent, View view,
-//                                            int position, long id) {
-//                        Toast.makeText(Main.this, "You Clicked at " + location[position++], Toast.LENGTH_SHORT).show();
-//
-//                    }
-//                });
-//            } else {
-//                //alert("NO Picture");
-//            }
-//        }
 
+
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-
     }
 
     @Override
@@ -393,10 +386,5 @@ public class Main extends AppCompatActivity
 
             }
         });
-    }
-    public void alert(String s) {
-        Toast toast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
     }
 }
