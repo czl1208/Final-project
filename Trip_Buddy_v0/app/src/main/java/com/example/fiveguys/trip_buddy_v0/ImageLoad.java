@@ -139,6 +139,7 @@ public class ImageLoad extends BaseAdapter {
         textView.setText(descriptions2[position]);
         matchNumber.setText(matchNum.size()+"");
         try{
+            if (images2[position] != null)
             Picasso.with(mContext).load(images2[position]).into(imageView);
         } catch (Exception e) {
             Log.e("Error", e.getMessage());

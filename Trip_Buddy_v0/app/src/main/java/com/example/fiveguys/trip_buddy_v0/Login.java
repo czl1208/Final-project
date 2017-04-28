@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fiveguys.trip_buddy_v0.utils.PreferenceUtils;
 import com.facebook.FacebookSdk;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -40,6 +41,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 
 import org.w3c.dom.Text;
 
@@ -73,6 +77,15 @@ public class Login extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Intent intent = new Intent(getApplicationContext(), Main.class);
+            startActivity(intent);
+            finish();
+
+        } else {
+
+        }
         setContentView(R.layout.activity_login);
         FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
