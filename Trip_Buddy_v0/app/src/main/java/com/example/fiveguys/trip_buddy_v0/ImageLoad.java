@@ -44,10 +44,14 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.fiveguys.trip_buddy_v0.groupchannel.CreateGroupChannelActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.annotations.SerializedName;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.squareup.picasso.Picasso;
@@ -55,6 +59,7 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 /**
@@ -79,12 +84,13 @@ public class ImageLoad extends BaseAdapter {
     private Context mContext;
     private String[] images2;
     private String[] descriptions2;
-    public List<List<String>> matchNum;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
+    private String uid;
+    private List<List<String>> matchNum;
     public ImageLoad(Context c,List<String> images,List<String> descriptions, List<List<String>>
                                                                                       list) {
         mContext = c;
-        matchNum = Main.totList;
-        Log.d("Line 87", matchNum.toArray().toString());
         descriptions2 = new String[descriptions.size()];
         images2 = new String[images.size()];
         for (int i=0;i<descriptions.size(); i++) {
@@ -135,12 +141,51 @@ public class ImageLoad extends BaseAdapter {
         }
         TextView textView = (TextView) grid.findViewById(R.id.textView);
         ImageView imageView = (ImageView)grid.findViewById(R.id.imageView);
-        TextView matchNumber = (TextView) grid.findViewById(R.id.matchNumber);
+        final TextView matchNumber = (TextView) grid.findViewById(R.id.matchNumber);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        matchNum = new ArrayList<>();
+        uid = user.getUid();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
+        myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener() {
+            @Override public void onDataChange(DataSnapshot dataSnapshot) {
 
-        System.out.println("On getview" + descriptions2.toString() + "position" + position);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String destid = snapshot.getKey();
+                    for (DataSnapshot sp : snapshot.getChildren()) {
+                        final String strt = sp.child("startAddress").getValue(String.class);
+                        DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
+                        newRef.addValueEventListener(new ValueEventListener() {
+                            @Override public void onDataChange(DataSnapshot dataSnapshot) {
+                                List<String> sublist = new ArrayList<String>();
+                                for (DataSnapshot sp : dataSnapshot.getChildren()) {
+                                    if(sp.getValue().equals(true)){
+                                        sublist.add(sp.getKey().toString());
+                                    }
+                                    matchNum.add(sublist);
+                                    matchNumber.setText(matchNum.get(matchNum.size()-1).size()+"");
+                                }
+
+                            }
+                            @Override public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+
+                    }
+                }
+
+
+            }
+
+            @Override public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         textView.setText(descriptions2[position]);
         Log.d("matchNum", Arrays.toString(matchNum.toArray()));
-        matchNumber.setText(0+"");
+
+
         try{
             if (images2[position] != null)
             Picasso.with(mContext).load(images2[position]).into(imageView);

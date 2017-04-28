@@ -177,7 +177,6 @@ public class Main extends AppCompatActivity
                                         grid.setOnItemClickListener(new AdapterView.OnItemClickListener(){
                                             @Override
                                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                                                System.out.println("HHHHHHHHHH");
                                                 Toast.makeText(Main.this, "You Clicked at " +totList.get(i),
                                                         Toast.LENGTH_SHORT).show();
                                                 Intent intent = new Intent(Main.this, CreateGroupChannelActivity.class);
