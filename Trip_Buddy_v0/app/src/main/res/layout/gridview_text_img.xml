@@ -10,10 +10,9 @@
         android:id="@+id/imageView"
         android:scaleType="centerCrop"
         android:layout_centerVertical="true"
-        android:clickable="true"
-        android:focusable="true"
         android:tint="@color/photo_tint_white"
-        android:focusableInTouchMode="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:layout_centerHorizontal="true" />
 
     <TextView
@@ -23,6 +22,8 @@
         android:textColor="@color/cardview_light_background"
         android:text="Information"
         android:id="@+id/textView"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:maxLines="1"
         android:gravity="center"
         android:textStyle="bold"

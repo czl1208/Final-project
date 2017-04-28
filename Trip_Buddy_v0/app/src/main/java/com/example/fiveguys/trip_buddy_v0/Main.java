@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -72,8 +73,13 @@ public class Main extends AppCompatActivity
     List<String> matches;
     GridView grid;
     HashMap<String, List<String>> hm;
+    public static List<Integer> list = new ArrayList<>();
+    public  static List<List<String>> totList;
     private static final String TAG = Main.class.getSimpleName();
 
+    public List<List<String>> toList() {
+        return this.totList;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,36 +143,58 @@ public class Main extends AppCompatActivity
         ImageView nav_image = (ImageView) header.findViewById(R.id.nav_image);
 
         hm = new HashMap<>();
+        totList = new ArrayList<>();
+
         myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener
                                                                                        () {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        totList.clear();
                         urilist.clear();
                         destinations.clear();
-
+                        list.clear();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String destid = snapshot.getKey();
                             for (DataSnapshot sp : snapshot.getChildren()) {
                                 snapshot.getKey();
                                 String url = sp.child("photoUrl").getValue(String.class);
                                 String des = sp.child("destinationName").getValue(String.class);
-                                String strt = sp.child("startAddress").getValue(String.class);
+                                final String strt = sp.child("startAddress").getValue(String.class);
                                 String dest = sp.child("destinationAddress").getValue(String.class);
-                                String key = strt + dest;
-                                Log.i("Key", key);
-                                if (!hm.containsKey(key)) {
-                                    System.out.println("++++++++++++++++++++++++++++=");
-                                    hm.put(key, new ArrayList<String>());
-                                }
+                                DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
+                                newRef.addValueEventListener(new ValueEventListener() {
+                                    @Override public void onDataChange(DataSnapshot dataSnapshot) {
+                                        List<String> sublist = new ArrayList<String>();
+                                        for (DataSnapshot sp : dataSnapshot.getChildren()) {
+                                            System.out.println("++++++++++++++++" + sp.getValue());
+                                            if(sp.getValue().equals(true)){
+                                                sublist.add(sp.getKey().toString());
+                                            }
+                                            totList.add(sublist);
+                                        }
+                                        list.add(totList.get(totList.size()-1).size());
+                                        Log.d("totalList", Arrays.toString(list.toArray()));
+
+                                    }
+                                    @Override public void onCancelled(DatabaseError databaseError) {
+                                    }
+                                });
                                 urilist.add(url);
                                 destinations.add(des);
                             }
                         }
-                        ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, 0);
+
+                        ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, list);
                         grid=(GridView)findViewById(R.id.gridview);
                         grid.setAdapter(adapter);
-                        for (String key : hm.keySet()) {
-                            Log.d("Keyset", key);
-                        }
+                        grid.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                Toast.makeText(Main.this, "You Clicked at " +totList.get(i),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     }
 
 
@@ -177,46 +205,46 @@ public class Main extends AppCompatActivity
 
 
 
-        myRef.child("users").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.d("HashMap", snapshot.getKey());
-                    for (DataSnapshot sp : snapshot.getChildren()) { // for each user
-
-                        for (DataSnapshot sp2 : sp.getChildren()) {
-                            for (DataSnapshot sp3 : sp2.getChildren()) {
-//                                Log.d("EACH TRIP", sp3.getKey());
-                                String start = sp3.child("startAddress").getValue(String.class);
-                                String end = sp3.child("destinationAddress").getValue(String.class);
-                                String key = start+end;
-//                                Log.i("KeyNew", key);
-                                System.out.println("Line 175" + key);
-                                if (hm.containsKey(key)) {
-                                    List<String> list = hm.get(key);
-                                    list.add(snapshot.getKey());
-                                    hm.put(key,list);
-                                }
-                            }
-                        }
-                    }
-                }
-                System.out.println("LINE 182" + Arrays.asList(hm)); // method 1
-                int matchNum = hm.size();
-                ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, matchNum);
-                grid=(GridView)findViewById(R.id.gridview);
-                grid.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+//        myRef.child("users").addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    Log.d("HashMap", snapshot.getKey());
+//                    for (DataSnapshot sp : snapshot.getChildren()) { // for each user
+//
+//                        for (DataSnapshot sp2 : sp.getChildren()) {
+//                            for (DataSnapshot sp3 : sp2.getChildren()) {
+////                                Log.d("EACH TRIP", sp3.getKey());
+//                                String start = sp3.child("startAddress").getValue(String.class);
+//                                String end = sp3.child("destinationAddress").getValue(String.class);
+//                                String key = start+end;
+////                                Log.i("KeyNew", key);
+//                                System.out.println("Line 175" + key);
+//                                if (hm.containsKey(key)) {
+//                                    List<String> list = hm.get(key);
+//                                    list.add(snapshot.getKey());
+//                                    hm.put(key,list);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                System.out.println("LINE 182" + Arrays.asList(hm)); // method 1
+//                int matchNum = hm.size();
+//                ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, matchNum);
+//                grid=(GridView)findViewById(R.id.gridview);
+//                grid.setAdapter(adapter);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
 
 
         // pass matches to it
 
-
+        Log.d("HHHHHHHHHHHtotalList", Arrays.toString(list.toArray()));
         nav_name.setText(username);
         myRef.child("users").child(uid).child("age").addValueEventListener(new ValueEventListener() {
             @Override

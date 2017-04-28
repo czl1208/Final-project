@@ -78,10 +78,11 @@ public class ImageLoad extends BaseAdapter {
     private Context mContext;
     private String[] images2;
     private String[] descriptions2;
-    private int matchNum;
-    public ImageLoad(Context c,List<String> images,List<String> descriptions, int match ) {
+    public List<Integer> matchNum;
+    public ImageLoad(Context c,List<String> images,List<String> descriptions, List<Integer> matchList
+    ) {
         mContext = c;
-        matchNum = match;
+        matchNum = matchList;
         descriptions2 = new String[descriptions.size()];
         images2 = new String[images.size()];
         for (int i=0;i<descriptions.size(); i++) {
@@ -117,15 +118,15 @@ public class ImageLoad extends BaseAdapter {
         if (convertView == null) {
             grid = new View(mContext);
             grid = inflater.inflate(R.layout.gridview_text_img, null);
-            grid.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    Toast.makeText(mContext, "You Clicked "+String.valueOf(position), Toast.LENGTH_LONG)
-                            .show();
-                }
-            });
+//            grid.setOnClickListener(new View.OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    // TODO Auto-generated method stub
+//                    Toast.makeText(mContext, "You Clicked "+String.valueOf(position), Toast.LENGTH_LONG)
+//                            .show();
+//                }
+//            });
 
         } else {
             grid = (View)convertView;
@@ -136,13 +137,18 @@ public class ImageLoad extends BaseAdapter {
 
         System.out.println("On getview" + descriptions2.toString() + "position" + position);
         textView.setText(descriptions2[position]);
-        matchNumber.setText(matchNum+"");
+        matchNumber.setText(matchNum.size()+"");
         try{
             Picasso.with(mContext).load(images2[position]).into(imageView);
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
             e.printStackTrace();
         }
+//        grid.setOnClickListener(new View.OnClickListener() {
+//            @Override public void onClick(View view) {
+//                Toast.makeText(mContext, "You Clicked "+Main.totList.get(position), Toast.LENGTH_LONG).show();
+//            }
+//        });
         return grid;
     }
 }
