@@ -1,5 +1,7 @@
 package com.example.fiveguys.trip_buddy_v0;
 
+import android.*;
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -97,6 +99,8 @@ public class NewTrip extends FragmentActivity
     private FirebaseUser user;
     private String uid;
     private Uri photoUrl;
+    private boolean NoPhoto = false;
+    private boolean SavingPhoto = false;
     private DatabaseReference Users;
     private StorageReference mStorageRef;
     private CharSequence sAddress;
@@ -105,6 +109,7 @@ public class NewTrip extends FragmentActivity
     private String cPlaceNames, cPlaceid, cPlaceAddresses,cPlaceAttributions;
     private LatLng cPlaceLatLngs;
     private boolean DesLayout;
+    private boolean Storagepermission;
 
     private String sCity;
     private String sId;
@@ -197,7 +202,12 @@ public class NewTrip extends FragmentActivity
             @Override
             public void onClick(View v) {
                 if(sId == null){
-                    Toast toast = Toast.makeText(getApplicationContext(), "Search For a Destination", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Search For a Destination", Toast.LENGTH_SHORT);
+                    toast.show();
+                    return;
+                }
+                if(SavingPhoto){
+                    Toast toast = Toast.makeText(getApplicationContext(), "Slow Connection Try Again", Toast.LENGTH_SHORT);
                     toast.show();
                     return;
                 }
@@ -209,10 +219,8 @@ public class NewTrip extends FragmentActivity
                     DateFormat df = new SimpleDateFormat("MM_dd_yy");
                     Date dateobj = new Date();
                     String timestamp = df.format(dateobj);
-                    startAddress = startAddress.replace("\n", ", ");
-                    startAddress = startAddress.replace("[^A-Za-Z]","");
+                    startAddress = startAddress.replaceAll("[0-9]","");
                     DatabaseReference newTrip = database.getReference("/trips/"+sId);
-                    //placePhotosTask();
                     newTrip.child(startAddress).child(uid).setValue(true);
                     DatabaseReference trip = database.getReference("/users/"+uid+"/trips/"+sId+"/"+timestamp);
                     trip.child("startAddress").setValue(startAddress);
@@ -220,6 +228,7 @@ public class NewTrip extends FragmentActivity
                     trip.child("destinationName").setValue(sPlace);
                     trip.child("destinationAddress").setValue(sAddress);
                     trip.child("destinationLocation").setValue(sLocation);
+                    if(photoUrl != null)
                     trip.child("photoUrl").setValue(photoUrl.toString());
                     trip.child("activity").setValue(true);
                     Toast toast = Toast.makeText(getApplicationContext(), "Your Jouney Begins", Toast.LENGTH_SHORT);
@@ -281,7 +290,7 @@ public class NewTrip extends FragmentActivity
 
                         if (addresses.size() > 0)
                             System.out.println(addresses.get(0).getLocality());
-                        address.append(addresses.get(0).getAddressLine(1)).append("\n")
+                        address.append(addresses.get(0).getAddressLine(1))
                                 .append(addresses.get(0).getAddressLine(2));
                         address1.append(addresses.get(0).getAddressLine(1));
                         address2.append(addresses.get(0).getAddressLine(2));
@@ -298,7 +307,7 @@ public class NewTrip extends FragmentActivity
                             .snippet(address2.toString()));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(cBound,10));
                     String address11 = address1.toString();
-                    address11 = address11.replace("[^A-Za-Z]","");
+                    address11 = address11.replaceAll("[0-9]","");
                     Start.setText(address11);
                 }
             }
@@ -409,8 +418,6 @@ public class NewTrip extends FragmentActivity
             // Get the likely places - that is, the businesses and other points of interest that
             // are the best match for the device's current location.
             @SuppressWarnings("MissingPermission")
-            PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
-                    .getCurrentPlace(mGoogleApiClient, null);
             StringBuffer address = new StringBuffer();
             StringBuffer address1 = new StringBuffer();
             StringBuffer address2 = new StringBuffer();
@@ -421,7 +428,7 @@ public class NewTrip extends FragmentActivity
 
                 if (addresses.size() > 0)
                     System.out.println(addresses.get(0).getLocality());
-                address.append(addresses.get(0).getAddressLine(1)).append("\n")
+                address.append(addresses.get(0).getAddressLine(1))
                         .append(addresses.get(0).getAddressLine(2));
                 address1.append(addresses.get(0).getAddressLine(1));
                 address2.append(addresses.get(0).getAddressLine(2));
@@ -439,11 +446,19 @@ public class NewTrip extends FragmentActivity
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_person_pin))
                     .position(cLocation)
                     .snippet(address2.toString()));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cLocation, DEFAULT_ZOOM));
             if(!DesLayout) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cLocation, DEFAULT_ZOOM));
                 String address11 = address1.toString();
-                address11 = address11.replace("[^A-Za-Z]","");
+                address11 = address11.replaceAll("[0-9]","");
                 Start.setText(address11);
+            }else{
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions()
+                        .title(startAddress)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_person_pin))
+                        .position(startLocation)
+                        .snippet(startAddress));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation, DEFAULT_ZOOM));
             }
         } else {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation));
@@ -455,14 +470,16 @@ public class NewTrip extends FragmentActivity
             @Override
             public void onSuccess(Uri uri) {
                 photoUrl = uri;
-//                Toast toast = Toast.makeText(getApplicationContext(),"found",Toast.LENGTH_SHORT);
-//                toast.show();
+                Toast toast = Toast.makeText(getApplicationContext(),"found",Toast.LENGTH_SHORT);
+                toast.show();
                 return;
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                new PhotoTask(R.dimen.photo_height*2, R.dimen.photo_height) {
+                exception.printStackTrace();
+
+                new PhotoTask(R.dimen.photo_height, R.dimen.photo_height) {
                     @Override
                     protected void onPreExecute() {
                         // Display a temporary image to show while bitmap is loading.
@@ -471,11 +488,15 @@ public class NewTrip extends FragmentActivity
 
                     @Override
                     protected void onPostExecute(AttributedPhoto attributedPhoto) {
-                        if (attributedPhoto != null) {
+                        Toast toast = Toast.makeText(getApplicationContext(), "after excution",Toast.LENGTH_LONG);
+                        toast.show();
+                        if (attributedPhoto != null && attributedPhoto !=null) {
                             // Photo has been loaded, display it.
 
                            // PlaceImage.setImageBitmap(attributedPhoto.bitmap);
                             try {
+                                SavingPhoto = true;
+
                                 FileOutputStream fos = openFileOutput(sId + ".png", Context.MODE_PRIVATE);
 
                                 attributedPhoto.bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
@@ -492,14 +513,20 @@ public class NewTrip extends FragmentActivity
                                                 @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
                                                 // Users.child("trips").child(sId).child("photoUrl").setValue(downloadUrl);
                                                 photoUrl = downloadUrl;
+
+                                                Toast toast = Toast.makeText(getApplicationContext(), downloadUrl.toString(),Toast.LENGTH_LONG);
+                                                toast.show();
+                                                SavingPhoto = false;
+
                                             }
                                         })
 
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception exception) {
-                                                // Handle unsuccessful uploads
-                                                // ...
+                                                exception.printStackTrace();
+                                                Toast toast = Toast.makeText(getApplicationContext(), "save failed",Toast.LENGTH_LONG);
+                                                toast.show();
                                             }
                                         });
                                 fos.close();
@@ -507,14 +534,9 @@ public class NewTrip extends FragmentActivity
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-//                    // Display the attribution as HTML content if set.
-//                    if (attributedPhoto.attribution == null) {
-//                        mText.setVisibility(View.GONE);
-//                    } else {
-//                        mText.setVisibility(View.VISIBLE);
-//                        mText.setText(Html.fromHtml(attributedPhoto.attribution.toString()));
-//                    }
-
+                        }else{
+                            toast = Toast.makeText(getApplicationContext(), "no image",Toast.LENGTH_LONG);
+                            toast.show();
                         }
                     }
                 }.execute(sId);
@@ -554,7 +576,7 @@ public class NewTrip extends FragmentActivity
                     PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
                     CharSequence attribution = photo.getAttributions();
                     // Load a scaled bitmap for this photo.
-                    Bitmap image = photo.getScaledPhoto(mGoogleApiClient, mWidth, mHeight).await()
+                    Bitmap image = photo.getPhoto(mGoogleApiClient).await()
                             .getBitmap();
 
                     attributedPhoto = new com.example.fiveguys.trip_buddy_v0.NewTrip.PhotoTask.AttributedPhoto(attribution, image);
@@ -590,7 +612,7 @@ public class NewTrip extends FragmentActivity
                 .position(sLocation)
                 .snippet((String)sAddress));
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(sBound,10));
-            Destination.setText(sAddress);
+            Destination.setText(sPlace);
             placePhotosTask();
     }
     public boolean onMyLocationButtonClick() {
