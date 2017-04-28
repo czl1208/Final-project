@@ -170,13 +170,14 @@ public class Main extends AppCompatActivity
                                             totList.add(sublist);
 
                                         }
-                                        Log.d("totalList", Arrays.toString(totList.toArray()));
+//                                        Log.d("totalList", Arrays.toString(totList.toArray()));
                                         ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations,totList);
                                         grid=(GridView)findViewById(R.id.gridview);
-
+                                        grid.setAdapter(adapter);
                                         grid.setOnItemClickListener(new AdapterView.OnItemClickListener(){
                                             @Override
                                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                                                System.out.println("HHHHHHHHHH");
                                                 Toast.makeText(Main.this, "You Clicked at " +totList.get(i),
                                                         Toast.LENGTH_SHORT).show();
                                                 Intent intent = new Intent(Main.this, CreateGroupChannelActivity.class);
@@ -184,7 +185,7 @@ public class Main extends AppCompatActivity
                                                 startActivity(intent);
                                             }
                                         });
-                                        grid.setAdapter(adapter);
+
 
                                     }
                                     @Override public void onCancelled(DatabaseError databaseError) {
@@ -192,11 +193,14 @@ public class Main extends AppCompatActivity
                                 });
                                 urilist.add(url);
                                 destinations.add(des);
+
                             }
                         }
 
 
                     }
+
+
 
 
                     @Override

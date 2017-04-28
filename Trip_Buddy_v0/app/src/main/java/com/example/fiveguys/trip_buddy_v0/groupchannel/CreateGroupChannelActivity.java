@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -49,6 +50,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
         setContentView(R.layout.activity_create_group_channel);
         usridlist = new ArrayList<>();
         usridlist = getIntent().getStringArrayListExtra("LIST");
+        Log.d("userid", usridlist.toString());
         mSelectedIds = new ArrayList<>();
 
         if (savedInstanceState == null) {
