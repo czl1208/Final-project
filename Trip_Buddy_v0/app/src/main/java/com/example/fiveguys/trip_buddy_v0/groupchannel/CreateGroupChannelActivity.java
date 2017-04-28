@@ -40,13 +40,15 @@ public class CreateGroupChannelActivity extends AppCompatActivity
     private int mCurrentState;
 
     private Toolbar mToolbar;
+    private List<String> usridlist;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_create_group_channel);
-
+        usridlist = new ArrayList<>();
+        usridlist = getIntent().getStringArrayListExtra("LIST");
         mSelectedIds = new ArrayList<>();
 
         if (savedInstanceState == null) {

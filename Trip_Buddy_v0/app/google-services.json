@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "196267666943-ji6eo0hl6lc364tl1tc2rm50scks27ku.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fiveguys.trip_buddy_v0",
+            "certificate_hash": "edd5abc4e4f87daea69808ee3892125e03c143b1"
+          }
+        },
+        {
           "client_id": "196267666943-sb3mp42c0aqnbn4nmu1oredcpjdqi96r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

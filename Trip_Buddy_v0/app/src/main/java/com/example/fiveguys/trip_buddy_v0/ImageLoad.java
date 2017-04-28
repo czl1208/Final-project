@@ -55,6 +55,7 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 /**
  * Created by shou on 3/25/2017.
@@ -78,11 +79,12 @@ public class ImageLoad extends BaseAdapter {
     private Context mContext;
     private String[] images2;
     private String[] descriptions2;
-    public List<Integer> matchNum;
-    public ImageLoad(Context c,List<String> images,List<String> descriptions, List<Integer> matchList
-    ) {
+    public List<List<String>> matchNum;
+    public ImageLoad(Context c,List<String> images,List<String> descriptions, List<List<String>>
+                                                                                      list) {
         mContext = c;
-        matchNum = matchList;
+        matchNum = Main.totList;
+        Log.d("Line 87", matchNum.toArray().toString());
         descriptions2 = new String[descriptions.size()];
         images2 = new String[images.size()];
         for (int i=0;i<descriptions.size(); i++) {
@@ -137,7 +139,8 @@ public class ImageLoad extends BaseAdapter {
 
         System.out.println("On getview" + descriptions2.toString() + "position" + position);
         textView.setText(descriptions2[position]);
-        matchNumber.setText(matchNum.size()+"");
+        Log.d("matchNum", Arrays.toString(matchNum.toArray()));
+        matchNumber.setText(0+"");
         try{
             if (images2[position] != null)
             Picasso.with(mContext).load(images2[position]).into(imageView);
@@ -145,11 +148,6 @@ public class ImageLoad extends BaseAdapter {
             Log.e("Error", e.getMessage());
             e.printStackTrace();
         }
-//        grid.setOnClickListener(new View.OnClickListener() {
-//            @Override public void onClick(View view) {
-//                Toast.makeText(mContext, "You Clicked "+Main.totList.get(position), Toast.LENGTH_LONG).show();
-//            }
-//        });
         return grid;
     }
 }

@@ -2,6 +2,7 @@ package com.example.fiveguys.trip_buddy_v0;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.Image;
@@ -29,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fiveguys.trip_buddy_v0.groupchannel.CreateGroupChannelActivity;
 import com.example.fiveguys.trip_buddy_v0.main.ChatActivity;
 import com.example.fiveguys.trip_buddy_v0.utils.PreferenceUtils;
 import com.facebook.login.LoginManager;
@@ -73,13 +75,10 @@ public class Main extends AppCompatActivity
     List<String> matches;
     GridView grid;
     HashMap<String, List<String>> hm;
-    public static List<Integer> list = new ArrayList<>();
+    public static List<List<String>> list = new ArrayList<>();
     public  static List<List<String>> totList;
     private static final String TAG = Main.class.getSimpleName();
 
-    public List<List<String>> toList() {
-        return this.totList;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +87,7 @@ public class Main extends AppCompatActivity
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         urilist = new ArrayList<>();
         destinations = new ArrayList<>();
-
+        totList = new ArrayList<>();
         if (user != null) {
             username = user.getDisplayName();
             email = user.getEmail();
@@ -143,13 +142,11 @@ public class Main extends AppCompatActivity
         ImageView nav_image = (ImageView) header.findViewById(R.id.nav_image);
 
         hm = new HashMap<>();
-        totList = new ArrayList<>();
 
         myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener
                                                                                        () {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        totList.clear();
                         urilist.clear();
                         destinations.clear();
                         list.clear();
@@ -171,9 +168,23 @@ public class Main extends AppCompatActivity
                                                 sublist.add(sp.getKey().toString());
                                             }
                                             totList.add(sublist);
+
                                         }
-                                        list.add(totList.get(totList.size()-1).size());
-                                        Log.d("totalList", Arrays.toString(list.toArray()));
+                                        Log.d("totalList", Arrays.toString(totList.toArray()));
+                                        ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations,totList);
+                                        grid=(GridView)findViewById(R.id.gridview);
+
+                                        grid.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                Toast.makeText(Main.this, "You Clicked at " +totList.get(i),
+                                                        Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(Main.this, CreateGroupChannelActivity.class);
+                                                intent.putStringArrayListExtra("LIST", new ArrayList<String>(totList.get(i)));
+                                                startActivity(intent);
+                                            }
+                                        });
+                                        grid.setAdapter(adapter);
 
                                     }
                                     @Override public void onCancelled(DatabaseError databaseError) {
@@ -184,16 +195,6 @@ public class Main extends AppCompatActivity
                             }
                         }
 
-                        ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, list);
-                        grid=(GridView)findViewById(R.id.gridview);
-                        grid.setAdapter(adapter);
-                        grid.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-                            @Override
-                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                Toast.makeText(Main.this, "You Clicked at " +totList.get(i),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        });
 
                     }
 
@@ -244,7 +245,6 @@ public class Main extends AppCompatActivity
 
         // pass matches to it
 
-        Log.d("HHHHHHHHHHHtotalList", Arrays.toString(list.toArray()));
         nav_name.setText(username);
         myRef.child("users").child(uid).child("age").addValueEventListener(new ValueEventListener() {
             @Override
@@ -347,6 +347,12 @@ public class Main extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public static List<List<String>> getVariable()
+    {
+        return totList;
+    }
+
 
     /**
      * Attempts to connect a user to SendBird.
