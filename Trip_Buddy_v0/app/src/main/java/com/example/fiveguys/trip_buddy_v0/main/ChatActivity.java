@@ -44,13 +44,13 @@ public class ChatActivity extends AppCompatActivity {
 
 
         // Set up app bar
-//        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
-//        setSupportActionBar(mToolbar);
-//
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//            getSupportActionBar().setHomeButtonEnabled(true);
-//        }
+        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(mToolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_main);
         mNavView = (NavigationView) findViewById(R.id.nav_view_main);

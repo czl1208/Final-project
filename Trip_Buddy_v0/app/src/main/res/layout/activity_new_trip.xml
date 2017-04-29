@@ -79,7 +79,7 @@
             android:layout_row="1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:text="Search A City to Begin"
+            android:text="Search A City"
             android:layout_weight="4"
             android:gravity="center|top"
             android:layout_gravity="top"

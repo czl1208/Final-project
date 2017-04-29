@@ -12,6 +12,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.util.Log;
@@ -31,6 +33,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.fiveguys.trip_buddy_v0.groupchannel.CreateGroupChannelActivity;
+import com.example.fiveguys.trip_buddy_v0.groupchannel.GroupChannelListFragment;
+import com.example.fiveguys.trip_buddy_v0.groupchannel.GroupChatFragment;
 import com.example.fiveguys.trip_buddy_v0.main.ChatActivity;
 import com.example.fiveguys.trip_buddy_v0.utils.PreferenceUtils;
 import com.facebook.login.LoginManager;
@@ -78,7 +82,7 @@ public class Main extends AppCompatActivity
     public static List<List<String>> list = new ArrayList<>();
     public  static List<List<String>> totList;
     private static final String TAG = Main.class.getSimpleName();
-
+    private NavigationView mNavView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +211,17 @@ public class Main extends AppCompatActivity
                     }
                 });
 
+
+        String channelUrl = getIntent().getStringExtra("groupChannelUrl");
+        if(channelUrl != null) {
+            // If started from notification
+            Fragment fragment = GroupChatFragment.newInstance(channelUrl);
+            FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction()
+                    .replace(R.id.container_main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
 
 
 //        myRef.child("users").addValueEventListener(new ValueEventListener() {
@@ -404,7 +419,7 @@ public class Main extends AppCompatActivity
                             return;
                         }
 
-                        Toast.makeText(Main.this, "Push token registered.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(Main.this, "Push token registered.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

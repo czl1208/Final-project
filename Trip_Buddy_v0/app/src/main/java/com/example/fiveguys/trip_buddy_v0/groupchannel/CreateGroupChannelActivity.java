@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBirdException;
@@ -54,7 +55,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
         mSelectedIds = new ArrayList<>();
 
         if (savedInstanceState == null) {
-            Fragment fragment = SelectUserFragment.newInstance();
+            Fragment fragment = SelectUserFragment.newInstance(usridlist);
             FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction()
                     .replace(R.id.container_create_group_channel, fragment)
@@ -88,7 +89,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
         });
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_create_group_channel);
-        //setSupportActionBar(mToolbar);
+        setSupportActionBar(mToolbar);
 
     }
 
@@ -149,6 +150,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
                 intent.putExtra(EXTRA_NEW_CHANNEL_URL, groupChannel.getUrl());
                 setResult(RESULT_OK, intent);
                 finish();
+                Toast.makeText(getApplicationContext(),"enter",Toast.LENGTH_LONG).show();
             }
         });
     }

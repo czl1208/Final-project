@@ -33,6 +33,7 @@ public class SelectUserFragment extends Fragment{
     private UsersSelectedListener mListener;
 
     private List<String> mSelectedUserIds;
+    private static List<String> mShowedUserIds;
 
 
     // To pass selected user IDs to the parent Activity.
@@ -40,9 +41,9 @@ public class SelectUserFragment extends Fragment{
         void onUserSelected(boolean selected, String userId);
     }
 
-    static SelectUserFragment newInstance() {
+    static SelectUserFragment newInstance(List<String> userIds) {
         SelectUserFragment fragment = new SelectUserFragment();
-
+        mShowedUserIds = userIds;
         return fragment;
     }
 
@@ -70,7 +71,7 @@ public class SelectUserFragment extends Fragment{
 
         setUpRecyclerView();
 
-        loadInitialUserList(15);
+        loadInitialUserList(mShowedUserIds);
 
         ((CreateGroupChannelActivity) getActivity()).setState(CreateGroupChannelActivity.STATE_SELECT_USERS);
 
@@ -82,24 +83,24 @@ public class SelectUserFragment extends Fragment{
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mListAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (mLayoutManager.findLastVisibleItemPosition() == mListAdapter.getItemCount() - 1) {
-                    loadNextUserList(10);
-                }
-            }
-        });
+//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                if (mLayoutManager.findLastVisibleItemPosition() == mListAdapter.getItemCount() - 1) {
+//                    loadNextUserList(10);
+//                }
+//            }
+//        });
     }
 
     /**
      * Replaces current user list with new list.
      * Should be used only on initial load.
      */
-    private void loadInitialUserList(int size) {
-        mUserListQuery = SendBird.createUserListQuery();
+    private void loadInitialUserList(List<String> userIds) {
+        mUserListQuery = SendBird.createUserListQuery(userIds);
 
-        mUserListQuery.setLimit(size);
+        //mUserListQuery.setLimit(size);
         mUserListQuery.next(new UserListQuery.UserListQueryResultHandler() {
             @Override
             public void onResult(List<User> list, SendBirdException e) {
@@ -116,7 +117,7 @@ public class SelectUserFragment extends Fragment{
     /**
      * Loads users and adds them to current user list.
      *
-     * A PreviousMessageListQuery must have been already initialized through {@link #loadInitialUserList(int)}
+     * A PreviousMessageListQuery must have been already initialized through {@link #loadInitialUserList(List<String>)}
      */
     private void loadNextUserList(int size) {
         mUserListQuery.setLimit(size);
