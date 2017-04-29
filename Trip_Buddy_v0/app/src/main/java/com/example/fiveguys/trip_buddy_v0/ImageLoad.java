@@ -143,29 +143,30 @@ public class ImageLoad extends BaseAdapter {
         ImageView imageView = (ImageView)grid.findViewById(R.id.imageView);
         final TextView matchNumber = (TextView) grid.findViewById(R.id.matchNumber);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        matchNum = new ArrayList<>();
+        matchNum = new ArrayList<List<String>>();
         uid = user.getUid();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
         myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener() {
             @Override public void onDataChange(DataSnapshot dataSnapshot) {
-
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String destid = snapshot.getKey();
+                    String destid = snapshot.getKey(); // only one destination
                     for (DataSnapshot sp : snapshot.getChildren()) {
-                        final String strt = sp.child("startAddress").getValue(String.class);
+                        String strt = sp.child("startAddress").getValue(String.class);
+                        //                        System.out.println(destid + "  " + strt);
                         DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
                         newRef.addValueEventListener(new ValueEventListener() {
+                            List<String> sublist = new ArrayList<String>();
                             @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                                List<String> sublist = new ArrayList<String>();
                                 for (DataSnapshot sp : dataSnapshot.getChildren()) {
                                     if(sp.getValue().equals(true)){
                                         sublist.add(sp.getKey().toString());
                                     }
-                                    matchNum.add(sublist);
-                                    matchNumber.setText(matchNum.get(matchNum.size()-1).size()+"");
                                 }
-
+                                matchNum.add(sublist);
+                                if (position < matchNum.size()) {
+                                    matchNumber.setText(matchNum.get(position).size() + "");
+                                }
                             }
                             @Override public void onCancelled(DatabaseError databaseError) {
                             }

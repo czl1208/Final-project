@@ -153,28 +153,27 @@ public class Main extends AppCompatActivity
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         urilist.clear();
                         destinations.clear();
-                        list.clear();
+                        totList.clear();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             String destid = snapshot.getKey();
                             for (DataSnapshot sp : snapshot.getChildren()) {
                                 snapshot.getKey();
                                 String url = sp.child("photoUrl").getValue(String.class);
                                 String des = sp.child("destinationName").getValue(String.class);
-                                final String strt = sp.child("startAddress").getValue(String.class);
+                                String strt = sp.child("startAddress").getValue(String.class);
                                 String dest = sp.child("destinationAddress").getValue(String.class);
                                 DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
+                                totList.clear();
                                 newRef.addValueEventListener(new ValueEventListener() {
                                     @Override public void onDataChange(DataSnapshot dataSnapshot) {
                                         List<String> sublist = new ArrayList<String>();
                                         for (DataSnapshot sp : dataSnapshot.getChildren()) {
-                                            System.out.println("++++++++++++++++" + sp.getValue());
                                             if(sp.getValue().equals(true)){
                                                 sublist.add(sp.getKey().toString());
                                             }
-                                            totList.add(sublist);
-
                                         }
-//                                        Log.d("totalList", Arrays.toString(totList.toArray()));
+                                        totList.add(sublist);
+                                        Log.d("totalList", Arrays.toString(totList.toArray()));
                                         ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations,totList);
                                         grid=(GridView)findViewById(R.id.gridview);
                                         grid.setAdapter(adapter);
@@ -188,8 +187,6 @@ public class Main extends AppCompatActivity
                                                 startActivity(intent);
                                             }
                                         });
-
-
                                     }
                                     @Override public void onCancelled(DatabaseError databaseError) {
                                     }
