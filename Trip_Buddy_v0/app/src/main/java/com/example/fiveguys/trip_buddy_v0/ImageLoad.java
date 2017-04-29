@@ -144,6 +144,7 @@ public class ImageLoad extends BaseAdapter {
         final TextView matchNumber = (TextView) grid.findViewById(R.id.matchNumber);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         matchNum = new ArrayList<List<String>>();
+        if(user != null)
         uid = user.getUid();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();

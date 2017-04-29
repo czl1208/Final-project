@@ -478,7 +478,7 @@ public class NewTrip extends FragmentActivity
             @Override
             public void onFailure(@NonNull Exception exception) {
                 exception.printStackTrace();
-
+                SavingPhoto = true;
                 new PhotoTask(R.dimen.photo_height, R.dimen.photo_height) {
                     @Override
                     protected void onPreExecute() {
@@ -514,8 +514,8 @@ public class NewTrip extends FragmentActivity
                                                 // Users.child("trips").child(sId).child("photoUrl").setValue(downloadUrl);
                                                 photoUrl = downloadUrl;
 
-                                                Toast toast = Toast.makeText(getApplicationContext(), downloadUrl.toString(),Toast.LENGTH_LONG);
-                                                toast.show();
+//                                                Toast toast = Toast.makeText(getApplicationContext(), downloadUrl.toString(),Toast.LENGTH_LONG);
+//                                                toast.show();
                                                 SavingPhoto = false;
 
                                             }
@@ -525,8 +525,9 @@ public class NewTrip extends FragmentActivity
                                             @Override
                                             public void onFailure(@NonNull Exception exception) {
                                                 exception.printStackTrace();
-                                                Toast toast = Toast.makeText(getApplicationContext(), "save failed",Toast.LENGTH_LONG);
-                                                toast.show();
+//                                                Toast toast = Toast.makeText(getApplicationContext(), "save failed",Toast.LENGTH_LONG);
+//                                                toast.show();
+                                                SavingPhoto = false;
                                             }
                                         });
                                 fos.close();
@@ -535,11 +536,12 @@ public class NewTrip extends FragmentActivity
                                 e.printStackTrace();
                             }
                         }else{
-                            toast = Toast.makeText(getApplicationContext(), "no image",Toast.LENGTH_LONG);
-                            toast.show();
+//                            toast = Toast.makeText(getApplicationContext(), "no image",Toast.LENGTH_LONG);
+//                            toast.show();
                         }
                     }
                 }.execute(sId);
+
             }
         });
     }
