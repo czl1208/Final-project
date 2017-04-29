@@ -429,7 +429,7 @@ public class Main extends AppCompatActivity
      * @param userNickname  The new nickname of the user.
      */
     private void updateCurrentUserInfo(String userNickname) {
-        SendBird.updateCurrentUserInfo(userNickname, null, new SendBird.UserInfoUpdateHandler() {
+        SendBird.updateCurrentUserInfo(username, String.valueOf(photoUrl), new SendBird.UserInfoUpdateHandler() {
             @Override
             public void onUpdated(SendBirdException e) {
                 if (e != null) {
