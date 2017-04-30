@@ -185,7 +185,7 @@ public class ImageLoad extends BaseAdapter {
         });
 
         textView.setText(descriptions2[position]);
-        Log.d("matchNum", Arrays.toString(matchNum.toArray()));
+       // Log.d("matchNum", Arrays.toString(matchNum.toArray()));
 
 
         try{

@@ -35,26 +35,18 @@
         android:layout_centerHorizontal="true"
         />
 
-    <ImageView
-        android:id="@+id/matchNumberTag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_bookmark"
-        android:layout_alignTop="@+id/imageView"
-        android:layout_alignParentStart="true" />
-
     <TextView
         android:id="@+id/matchNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="@color/cardview_light_background"
-        android:textSize="30sp"
+        android:textSize="30dp"
         android:textStyle="bold"
-        android:layout_alignTop="@+id/matchNumberTag"
-        android:layout_alignStart="@id/matchNumberTag"
-        android:layout_marginTop="7dp"
-        android:layout_marginStart="22dp"
-        android:text="0" />
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/imageView"
+        android:text="0"
+        android:background="@drawable/ic_bookmark"
+        />
 
 </RelativeLayout>

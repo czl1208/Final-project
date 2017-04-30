@@ -11,10 +11,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.SwipeDismissBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -122,6 +124,16 @@ public class Main extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
 
+        final SwipeRefreshLayout refresh = (SwipeRefreshLayout)findViewById(R.id.swiperefresh);
+        refresh.setProgressBackgroundColorSchemeResource(R.color.WordDark);
+        refresh.setColorSchemeResources(R.color.cardview_light_background);
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //refreshGrid();
+                refresh.setRefreshing(false);
+            }
+        });
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -349,7 +361,8 @@ public class Main extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), MyInfo.class);// Handle the camera action
             startActivity(intent);
         } else if (id == R.id.nav_tripHistory) {
-
+            Intent intent = new Intent(getApplicationContext(), TripHistory.class);
+            startActivity(intent);
         } else if (id == R.id.nav_chat) {
             Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
             startActivity(intent);

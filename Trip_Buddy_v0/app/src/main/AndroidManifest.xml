@@ -46,7 +46,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             </intent-filter>
         </activity>
         <activity
@@ -73,6 +73,7 @@
         <activity
             android:name=".NewTrip"
             android:label="@string/title_activity_new_trip"
+            android:parentActivityName=".Main"
             android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar" />
         <activity
             android:name=".MyInfo"
@@ -112,6 +113,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".TripHistory"
+            android:label=""></activity>
     </application>
 
 </manifest>

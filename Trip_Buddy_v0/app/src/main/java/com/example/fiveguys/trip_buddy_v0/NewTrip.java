@@ -75,6 +75,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import static com.google.android.gms.R.id.auto;
 import static com.google.android.gms.R.id.url;
 
 public class NewTrip extends FragmentActivity
@@ -259,11 +260,14 @@ public class NewTrip extends FragmentActivity
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
                 if(DesLayout) {
+                    autocompleteFragment.setHint("Search Destination");
+                    autocompleteFragment.setText("");
                     autocompleteFragment.setFilter(new AutocompleteFilter.Builder()
                             .setTypeFilter(AutocompleteFilter.TYPE_FILTER_REGIONS)
                             .build());
-                }
+                }else autocompleteFragment.setHint("Search Start Location");
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
 
@@ -350,6 +354,7 @@ public class NewTrip extends FragmentActivity
                 mMap.setOnMyLocationButtonClickListener(this);
                 getDeviceLocation();
                 updateLocationUI();
+
                 // showCurrentPlace();
             }
 
@@ -470,8 +475,9 @@ public class NewTrip extends FragmentActivity
             @Override
             public void onSuccess(Uri uri) {
                 photoUrl = uri;
-                Toast toast = Toast.makeText(getApplicationContext(),"found",Toast.LENGTH_SHORT);
-                toast.show();
+//                Toast toast = Toast.makeText(getApplicationContext(),"found",Toast.LENGTH_SHORT);
+//                toast.show();
+                SavingPhoto = false;
                 return;
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -488,8 +494,8 @@ public class NewTrip extends FragmentActivity
 
                     @Override
                     protected void onPostExecute(AttributedPhoto attributedPhoto) {
-                        Toast toast = Toast.makeText(getApplicationContext(), "after excution",Toast.LENGTH_LONG);
-                        toast.show();
+//                        Toast toast = Toast.makeText(getApplicationContext(), "after excution",Toast.LENGTH_LONG);
+//                        toast.show();
                         if (attributedPhoto != null && attributedPhoto !=null) {
                             // Photo has been loaded, display it.
 
@@ -541,7 +547,7 @@ public class NewTrip extends FragmentActivity
                         }
                     }
                 }.execute(sId);
-
+                SavingPhoto = false;
             }
         });
     }
