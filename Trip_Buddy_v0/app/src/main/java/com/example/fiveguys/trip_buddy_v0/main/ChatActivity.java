@@ -44,8 +44,8 @@ public class ChatActivity extends AppCompatActivity {
 
 
         // Set up app bar
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        setSupportActionBar(mToolbar);
+        // mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        // setSupportActionBar(mToolbar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -214,20 +214,20 @@ public class ChatActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
 
         // Remove hamburger icon if a fragment is added.
-        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-
-                if(getSupportFragmentManager().getBackStackEntryCount() > 0){
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                }
-                else {
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                    mDrawerToggle.setDrawerIndicatorEnabled(true);
-                    mDrawerToggle.syncState();
-                }
-            }
-        });
+//        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+//            @Override
+//            public void onBackStackChanged() {
+//
+//                if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+//                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//                }
+//                else {
+//                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//                    mDrawerToggle.setDrawerIndicatorEnabled(true);
+//                    mDrawerToggle.syncState();
+//                }
+//            }
+//        });
     }
 
     /**

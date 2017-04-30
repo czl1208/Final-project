@@ -2,6 +2,7 @@ package com.example.fiveguys.trip_buddy_v0.groupchannel;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -37,11 +38,15 @@ public class GroupChannelListFragment2 extends Fragment {
     private FloatingActionButton mCreateChannelFab;
     private GroupChannelListQuery mChannelListQuery;
     private SwipeRefreshLayout mSwipeRefresh;
-    private static List<String> matchedusridlist;
+    static List<String> matchedusridlist;
+    static Uri matcheddestphoto;
+    static String matcheddestination;
 
-    public static GroupChannelListFragment2 newInstance(List<String> usridlist) {
+    public static GroupChannelListFragment2 newInstance(List<String> usridlist, Uri destphoto, String destination) {
         GroupChannelListFragment2 fragment = new GroupChannelListFragment2();
         matchedusridlist = usridlist;
+        matcheddestphoto = destphoto;
+        matcheddestination = destination;
         return fragment;
     }
 
@@ -82,6 +87,11 @@ public class GroupChannelListFragment2 extends Fragment {
 
         Intent intent = new Intent(getContext(), CreateGroupChannelActivity.class);
         intent.putStringArrayListExtra("LIST", new ArrayList<String>(matchedusridlist));
+        intent.putExtra("DEST_PHOTO", matcheddestphoto);
+        intent.putExtra("DESTINATION", matcheddestination);
+
+
+
         startActivityForResult(intent, INTENT_REQUEST_NEW_GROUP_CHANNEL);
 
         setUpRecyclerView();

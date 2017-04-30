@@ -1,6 +1,7 @@
 package com.example.fiveguys.trip_buddy_v0.main;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -44,6 +45,11 @@ public class Chat2Activity extends AppCompatActivity {
     private List<String> usridlist;
     private Button btnBack;
 
+    String destination;
+    Uri photoUrl;
+
+
+
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +58,8 @@ public class Chat2Activity extends AppCompatActivity {
         // get matched user list from main
         usridlist = new ArrayList<>();
         usridlist = getIntent().getStringArrayListExtra("LIST");
+        destination = getIntent().getStringExtra("DESTINATION");
+        photoUrl = Uri.parse(getIntent().getStringExtra("DEST_PHOTO"));
 
 
         // Set up app bar
@@ -87,7 +95,7 @@ public class Chat2Activity extends AppCompatActivity {
         if(savedInstanceState == null) {
             // If started from launcher
             Log.d("GroupChannelList", "000000000000000。");
-            Fragment fragment = GroupChannelListFragment2.newInstance(usridlist);
+            Fragment fragment = GroupChannelListFragment2.newInstance(usridlist, photoUrl, destination);
             FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction()
                     .replace(R.id.container_main2, fragment)
@@ -171,7 +179,8 @@ public class Chat2Activity extends AppCompatActivity {
 
                 if (id == R.id.nav_item_group_channels) {
                     Log.d("GroupChannelList", "33333333333333333333");
-                    fragment = GroupChannelListFragment2.newInstance(usridlist);
+                    fragment = GroupChannelListFragment2.newInstance(usridlist, photoUrl, destination);
+
 
                     FragmentManager manager = getSupportFragmentManager();
                     manager.popBackStack();

@@ -19,7 +19,10 @@ import com.sendbird.android.*;
 import com.example.fiveguys.trip_buddy_v0.R;
 import com.example.fiveguys.trip_buddy_v0.utils.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.fiveguys.trip_buddy_v0.groupchannel.GroupChannelListFragment2.matchedusridlist;
 
 
 public class GroupChatFragment2 extends Fragment {
@@ -297,6 +300,8 @@ public class GroupChatFragment2 extends Fragment {
 
         if (id == R.id.action_group_channel_invite2) {
             Intent intent = new Intent(getActivity(), InviteMemberActivity.class);
+            intent.putStringArrayListExtra("LIST", new ArrayList<String>(matchedusridlist));
+            Log.d("list66666", String.valueOf(matchedusridlist));
             intent.putExtra(EXTRA_CHANNEL_URL, mChannelUrl);
             startActivity(intent);
             return true;

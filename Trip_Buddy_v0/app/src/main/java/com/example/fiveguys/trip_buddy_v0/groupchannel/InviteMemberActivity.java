@@ -40,11 +40,16 @@ public class InviteMemberActivity extends AppCompatActivity{
 
     private List<String> mSelectedUserIds;
 
+    private List<String> usridlist;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_invite_member);
+
+        usridlist = new ArrayList<>();
+        usridlist = getIntent().getStringArrayListExtra("LIST");
 
         mSelectedUserIds = new ArrayList<>();
 
@@ -86,7 +91,7 @@ public class InviteMemberActivity extends AppCompatActivity{
 
         setUpRecyclerView();
 
-        loadInitialUserList(15);
+        loadInitialUserList();
     }
 
     private void setUpRecyclerView() {
@@ -136,11 +141,10 @@ public class InviteMemberActivity extends AppCompatActivity{
      * Replaces current user list with new list.
      * Should be used only on initial load.
      */
-    private void loadInitialUserList(int size) {
-        mUserListQuery = SendBird.createUserListQuery();
+    private void loadInitialUserList() {
+        mUserListQuery = SendBird.createUserListQuery(usridlist);
 
 
-        mUserListQuery.setLimit(size);
         mUserListQuery.next(new UserListQuery.UserListQueryResultHandler() {
             @Override
             public void onResult(List<User> list, SendBirdException e) {
@@ -149,17 +153,7 @@ public class InviteMemberActivity extends AppCompatActivity{
                     return;
                 }
 
-                List<User> list2 = new ArrayList<User>();
-
-
-                for (int i = 0; i < list.size(); i++) {
-
-                    if (String.valueOf(list.get(i).getUserId()).equals("1")){
-                        Log.i("dd", String.valueOf(list.get(i).getUserId()));
-                        list2.add(list.get(i));
-                    }
-                }
-                mListAdapter.setUserList(list2);
+                mListAdapter.setUserList(list);
 
             }
         });
@@ -168,7 +162,7 @@ public class InviteMemberActivity extends AppCompatActivity{
     /**
      * Loads users and adds them to current user list.
      *
-     * A PreviousMessageListQuery must have been already initialized through {@link #loadInitialUserList(int)}
+     * A PreviousMessageListQuery must have been already initialized through {@link #loadInitialUserList}
      */
     private void loadNextUserList(int size) {
         mUserListQuery.setLimit(size);

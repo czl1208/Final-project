@@ -1,6 +1,7 @@
 package com.example.fiveguys.trip_buddy_v0.groupchannel;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBirdException;
 import com.example.fiveguys.trip_buddy_v0.R;
@@ -43,6 +48,10 @@ public class CreateGroupChannelActivity extends AppCompatActivity
 
     private Toolbar mToolbar;
     private List<String> usridlist;
+    static Uri destphoto;
+    static String destination;
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,8 +60,12 @@ public class CreateGroupChannelActivity extends AppCompatActivity
         setContentView(R.layout.activity_create_group_channel);
         usridlist = new ArrayList<>();
         usridlist = getIntent().getStringArrayListExtra("LIST");
+        destination = getIntent().getStringExtra("DESTINATION");
+        destphoto = Uri.parse(getIntent().getStringExtra("DEST_PHOTO"));
+
         Log.d("userid", usridlist.toString());
         mSelectedIds = new ArrayList<>();
+
 
         if (savedInstanceState == null) {
             Fragment fragment = SelectUserFragment.newInstance(usridlist);
@@ -139,7 +152,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
      *                  the existing channel instance will be returned.
      */
     private void createGroupChannel(List<String> userIds, boolean distinct) {
-        GroupChannel.createChannelWithUserIds(userIds, distinct, new GroupChannel.GroupChannelCreateHandler() {
+        GroupChannel.createChannelWithUserIds(userIds, distinct, destination, destphoto, "", new GroupChannel.GroupChannelCreateHandler() {
             @Override
             public void onResult(GroupChannel groupChannel, SendBirdException e) {
                 if (e != null) {
