@@ -23,7 +23,7 @@ import java.util.List;
 import static android.app.Activity.RESULT_OK;
 
 
-public class GroupChannelListFragment extends Fragment {
+public class GroupChannelListFragment2 extends Fragment {
 
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_LIST";
     public static final String EXTRA_GROUP_CHANNEL_URL = "GROUP_CHANNEL_URL";
@@ -36,8 +36,8 @@ public class GroupChannelListFragment extends Fragment {
     private GroupChannelListQuery mChannelListQuery;
     private SwipeRefreshLayout mSwipeRefresh;
 
-    public static GroupChannelListFragment newInstance() {
-        GroupChannelListFragment fragment = new GroupChannelListFragment();
+    public static GroupChannelListFragment2 newInstance() {
+        GroupChannelListFragment2 fragment = new GroupChannelListFragment2();
 
         return fragment;
     }
@@ -48,18 +48,18 @@ public class GroupChannelListFragment extends Fragment {
 
         Log.d("LIFECYCLE", "GroupChannelListFragment onCreateView()");
 
-        View rootView = inflater.inflate(R.layout.fragment_group_channel_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_group_channel_list_fragment2, container, false);
 
         setRetainInstance(true);
 
         // Change action bar title
-        ((com.example.fiveguys.trip_buddy_v0.main.ChatActivity) getActivity()).setActionBarTitle(getResources().getString(R.string.all_group_channels));
+        ((com.example.fiveguys.trip_buddy_v0.main.Chat2Activity) getActivity()).setActionBarTitle(getResources().getString(R.string.all_group_channels));
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_group_channel_list);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_group_channel_list2);
         mChannelListAdapter = new GroupChannelListAdapter(getActivity());
-        //mCreateChannelFab = (FloatingActionButton) rootView.findViewById(R.id.fab_group_channel_list);
+        mCreateChannelFab = (FloatingActionButton) rootView.findViewById(R.id.fab_group_channel_list2);
 
-        mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_layout_group_channel_list);
+        mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_layout_group_channel_list2);
 
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -68,14 +68,13 @@ public class GroupChannelListFragment extends Fragment {
                 refreshChannelList(15);
             }
         });
-        Log.d("enterGroupChan", "1111111112345wocaonimalegebidezenmezhemeduo");
-//        mCreateChannelFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getContext(), CreateGroupChannelActivity.class);
-//                startActivityForResult(intent, INTENT_REQUEST_NEW_GROUP_CHANNEL);
-//            }
-//        });
+        mCreateChannelFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), CreateGroupChannelActivity.class);
+                startActivityForResult(intent, INTENT_REQUEST_NEW_GROUP_CHANNEL);
+            }
+        });
 
         setUpRecyclerView();
         setUpChannelListAdapter();

@@ -82,6 +82,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (mCurrentState == STATE_SELECT_DISTINCT) {
+                    Log.d("createGroupChannel", "ayyyyyyyyyyyyyyyyyyeeee 66666666");
                     createGroupChannel(mSelectedIds, mIsDistinct);
                 }
 
@@ -145,12 +146,11 @@ public class CreateGroupChannelActivity extends AppCompatActivity
                     // Error!
                     return;
                 }
-
                 Intent intent = new Intent();
                 intent.putExtra(EXTRA_NEW_CHANNEL_URL, groupChannel.getUrl());
                 setResult(RESULT_OK, intent);
                 finish();
-                Toast.makeText(getApplicationContext(),"enter",Toast.LENGTH_LONG).show();
+
             }
         });
     }

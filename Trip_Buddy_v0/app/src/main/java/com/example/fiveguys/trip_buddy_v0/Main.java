@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.example.fiveguys.trip_buddy_v0.groupchannel.CreateGroupChannelActivity;
 import com.example.fiveguys.trip_buddy_v0.groupchannel.GroupChannelListFragment;
 import com.example.fiveguys.trip_buddy_v0.groupchannel.GroupChatFragment;
+import com.example.fiveguys.trip_buddy_v0.main.Chat2Activity;
 import com.example.fiveguys.trip_buddy_v0.main.ChatActivity;
 import com.example.fiveguys.trip_buddy_v0.utils.PreferenceUtils;
 import com.facebook.login.LoginManager;
@@ -70,6 +71,7 @@ public class Main extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
 
+    private static final int INTENT_REQUEST_NEW_GROUP_CHANNEL = 302;
     String username, email, uid, age;
     Uri photoUrl;
     FirebaseDatabase database;
@@ -153,27 +155,28 @@ public class Main extends AppCompatActivity
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         urilist.clear();
                         destinations.clear();
-                        totList.clear();
+                        list.clear();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             String destid = snapshot.getKey();
                             for (DataSnapshot sp : snapshot.getChildren()) {
-                                //snapshot.getKey();
+                                snapshot.getKey();
                                 String url = sp.child("photoUrl").getValue(String.class);
                                 String des = sp.child("destinationName").getValue(String.class);
-                                String strt = sp.child("startAddress").getValue(String.class);
+                                final String strt = sp.child("startAddress").getValue(String.class);
                                 String dest = sp.child("destinationAddress").getValue(String.class);
                                 DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
-                                totList.clear();
                                 newRef.addValueEventListener(new ValueEventListener() {
                                     @Override public void onDataChange(DataSnapshot dataSnapshot) {
                                         List<String> sublist = new ArrayList<String>();
                                         for (DataSnapshot sp : dataSnapshot.getChildren()) {
+                                            System.out.println("++++++++++++++++" + sp.getValue());
                                             if(sp.getValue().equals(true)){
                                                 sublist.add(sp.getKey().toString());
                                             }
+                                            totList.add(sublist);
+
                                         }
-                                        totList.add(sublist);
-                                        Log.d("totalList", Arrays.toString(totList.toArray()));
+//                                        Log.d("totalList", Arrays.toString(totList.toArray()));
                                         ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations,totList);
                                         grid=(GridView)findViewById(R.id.gridview);
                                         grid.setAdapter(adapter);
@@ -182,11 +185,13 @@ public class Main extends AppCompatActivity
                                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                                 Toast.makeText(Main.this, "You Clicked at " +totList.get(i),
                                                         Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(Main.this, CreateGroupChannelActivity.class);
+                                                Intent intent = new Intent(Main.this, Chat2Activity.class);
                                                 intent.putStringArrayListExtra("LIST", new ArrayList<String>(totList.get(i)));
                                                 startActivity(intent);
                                             }
                                         });
+
+
                                     }
                                     @Override public void onCancelled(DatabaseError databaseError) {
                                     }
@@ -337,6 +342,8 @@ public class Main extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        //Log.d("6666666666666666", "777777777777777777777777777777777777777777777777777777");
+        //Log.d("5555555555555555", "777777777777777777777777777777777777777777777777777777");
 
         if (id == R.id.nav_account) {
             Intent intent = new Intent(getApplicationContext(), MyInfo.class);// Handle the camera action
@@ -443,4 +450,7 @@ public class Main extends AppCompatActivity
             }
         });
     }
+
+
+
 }
