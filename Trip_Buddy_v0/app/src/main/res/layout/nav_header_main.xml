@@ -31,16 +31,16 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:padding="7dp"
             android:id="@+id/nav_name"
             android:text=""
             android:textColor="@color/DarkGray"
-            android:textSize="24dp"
+            android:textSize="23dp"
             />
 
         <TextView
             android:id="@+id/nav_email"
-            android:padding="10dp"
+            android:padding="7dp"
             android:textColor="@color/DarkGray"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

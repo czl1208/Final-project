@@ -227,6 +227,7 @@ public class Login extends AppCompatActivity implements
                                     alert("Sign in successfully!");
                                     Intent intent = new Intent(getApplicationContext(), Main.class);
                                     startActivity(intent);
+                                    finish();
                                 }else{
                                     alert("Please verify your email");
                                 }
