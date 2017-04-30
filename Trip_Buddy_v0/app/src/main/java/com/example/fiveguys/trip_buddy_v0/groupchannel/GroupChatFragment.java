@@ -291,12 +291,7 @@ public class GroupChatFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_group_channel_invite) {
-            Intent intent = new Intent(getActivity(), InviteMemberActivity.class);
-            intent.putExtra(EXTRA_CHANNEL_URL, mChannelUrl);
-            startActivity(intent);
-            return true;
-        } else if (id == R.id.action_group_channel_view_members) {
+        if (id == R.id.action_group_channel_view_members) {
             Intent intent = new Intent(getActivity(), MemberListActivity.class);
             intent.putExtra(EXTRA_CHANNEL_URL, mChannelUrl);
             startActivity(intent);

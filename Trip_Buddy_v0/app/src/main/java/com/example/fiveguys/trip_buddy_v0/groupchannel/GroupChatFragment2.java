@@ -287,7 +287,7 @@ public class GroupChatFragment2 extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_group_chat, menu);
+        inflater.inflate(R.menu.menu_group_chat2, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -295,12 +295,12 @@ public class GroupChatFragment2 extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_group_channel_invite) {
+        if (id == R.id.action_group_channel_invite2) {
             Intent intent = new Intent(getActivity(), InviteMemberActivity.class);
             intent.putExtra(EXTRA_CHANNEL_URL, mChannelUrl);
             startActivity(intent);
             return true;
-        } else if (id == R.id.action_group_channel_view_members) {
+        } else if (id == R.id.action_group_channel_view_members2) {
             Intent intent = new Intent(getActivity(), MemberListActivity.class);
             intent.putExtra(EXTRA_CHANNEL_URL, mChannelUrl);
             startActivity(intent);
