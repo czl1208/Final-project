@@ -18,9 +18,11 @@ import android.view.ViewGroup;
 import com.sendbird.android.*;
 import com.example.fiveguys.trip_buddy_v0.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static com.example.fiveguys.trip_buddy_v0.Main.totList;
 
 
 public class GroupChannelListFragment2 extends Fragment {
@@ -35,10 +37,11 @@ public class GroupChannelListFragment2 extends Fragment {
     private FloatingActionButton mCreateChannelFab;
     private GroupChannelListQuery mChannelListQuery;
     private SwipeRefreshLayout mSwipeRefresh;
+    private static List<String> matchedusridlist;
 
-    public static GroupChannelListFragment2 newInstance() {
+    public static GroupChannelListFragment2 newInstance(List<String> usridlist) {
         GroupChannelListFragment2 fragment = new GroupChannelListFragment2();
-
+        matchedusridlist = usridlist;
         return fragment;
     }
 
@@ -68,13 +71,18 @@ public class GroupChannelListFragment2 extends Fragment {
                 refreshChannelList(15);
             }
         });
-        mCreateChannelFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), CreateGroupChannelActivity.class);
-                startActivityForResult(intent, INTENT_REQUEST_NEW_GROUP_CHANNEL);
-            }
-        });
+//        mCreateChannelFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getContext(), CreateGroupChannelActivity.class);
+//                intent.putStringArrayListExtra("LIST", new ArrayList<String>(matchedusridlist));
+//                startActivityForResult(intent, INTENT_REQUEST_NEW_GROUP_CHANNEL);
+//            }
+//        });
+
+        Intent intent = new Intent(getContext(), CreateGroupChannelActivity.class);
+        intent.putStringArrayListExtra("LIST", new ArrayList<String>(matchedusridlist));
+        startActivityForResult(intent, INTENT_REQUEST_NEW_GROUP_CHANNEL);
 
         setUpRecyclerView();
         setUpChannelListAdapter();
@@ -200,7 +208,7 @@ public class GroupChannelListFragment2 extends Fragment {
      */
     void enterGroupChannel(GroupChannel channel) {
         final String channelUrl = channel.getUrl();
-
+        Log.i("haha",channelUrl);
         enterGroupChannel(channelUrl);
     }
 
@@ -210,9 +218,9 @@ public class GroupChannelListFragment2 extends Fragment {
      * @param channelUrl The URL of the channel to enter.
      */
     void enterGroupChannel(String channelUrl) {
-        GroupChatFragment fragment = GroupChatFragment.newInstance(channelUrl);
+        GroupChatFragment2 fragment = GroupChatFragment2.newInstance(channelUrl);
         getFragmentManager().beginTransaction()
-                .replace(R.id.container_main, fragment)
+                .replace(R.id.container_main2, fragment)
                 .addToBackStack(null)
                 .commit();
     }

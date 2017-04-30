@@ -26,6 +26,6 @@
         android:background="@drawable/ic_back_arrow"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="7dp" />
+        android:layout_marginTop="8dp" />
 
 </RelativeLayout>

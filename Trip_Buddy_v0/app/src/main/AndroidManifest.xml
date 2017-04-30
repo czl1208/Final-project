@@ -83,6 +83,7 @@
 
         <!-- chat -->
         <activity android:name=".main.ChatActivity" />
+        <activity android:name=".main.Chat2Activity" />
         <activity
             android:name=".groupchannel.InviteMemberActivity"
             android:label="@string/invite_member" />

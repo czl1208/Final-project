@@ -73,7 +73,7 @@ public class ChatActivity extends AppCompatActivity {
                     .commit();
 
             // Visually sets item as checked
-            mNavView.setCheckedItem(R.id.nav_item_group_channels);
+            //mNavView.setCheckedItem(R.id.nav_item_group_channels);
         }
 
         String channelUrl = getIntent().getStringExtra("groupChannelUrl");

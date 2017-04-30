@@ -16,9 +16,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fiveguys.trip_buddy_v0.Main;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -26,6 +28,9 @@ import com.example.fiveguys.trip_buddy_v0.R;
 import com.example.fiveguys.trip_buddy_v0.groupchannel.*;
 import com.example.fiveguys.trip_buddy_v0.utils.*;
 import com.sendbird.android.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Chat2Activity extends AppCompatActivity {
@@ -36,24 +41,39 @@ public class Chat2Activity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavView;
     private ActionBarDrawerToggle mDrawerToggle;
+    private List<String> usridlist;
+    private Button btnBack;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat2);
 
+        // get matched user list from main
+        usridlist = new ArrayList<>();
+        usridlist = getIntent().getStringArrayListExtra("LIST");
+
 
         // Set up app bar
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main2);
         setSupportActionBar(mToolbar);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-        }
+//        if (getSupportActionBar() != null) {
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setHomeButtonEnabled(true);
+//        }
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_main2);
         mNavView = (NavigationView) findViewById(R.id.nav_view_main2);
+
+        btnBack = (Button) findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Chat2Activity.this, Main.class);
+                startActivity(intent);
+            }
+        });
 
         setUpNavigationDrawer();
         setUpDrawerToggle();
@@ -67,7 +87,7 @@ public class Chat2Activity extends AppCompatActivity {
         if(savedInstanceState == null) {
             // If started from launcher
             Log.d("GroupChannelList", "000000000000000。");
-            Fragment fragment = GroupChannelListFragment2.newInstance();
+            Fragment fragment = GroupChannelListFragment2.newInstance(usridlist);
             FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction()
                     .replace(R.id.container_main2, fragment)
@@ -91,21 +111,6 @@ public class Chat2Activity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        String channelUrl = getIntent().getStringExtra("groupChannelUrl");
-        if(channelUrl != null) {
-            // If started from notification
-            Log.d("GroupChatFragment", "22222222222222222222");
-            Fragment fragment = GroupChatFragment.newInstance(channelUrl);
-            FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction()
-                    .replace(R.id.container_main2, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -166,7 +171,7 @@ public class Chat2Activity extends AppCompatActivity {
 
                 if (id == R.id.nav_item_group_channels) {
                     Log.d("GroupChannelList", "33333333333333333333");
-                    fragment = GroupChannelListFragment2.newInstance();
+                    fragment = GroupChannelListFragment2.newInstance(usridlist);
 
                     FragmentManager manager = getSupportFragmentManager();
                     manager.popBackStack();
