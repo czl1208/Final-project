@@ -6,12 +6,14 @@ package com.example.fiveguys.trip_buddy_v0;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.provider.SearchRecentSuggestions;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
@@ -22,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.app.SearchManager;
 import android.content.Context;
@@ -88,8 +91,10 @@ public class ImageLoad extends BaseAdapter {
     private DatabaseReference myRef;
     private String uid;
     private List<List<String>> matchNum;
-    public ImageLoad(Context c,List<String> images,List<String> descriptions, List<List<String>>
-                                                                                      list) {
+    private EditPlayerAdapterCallback callback;
+    public ImageLoad(Context c,List<String> images,List<String> descriptions,
+                     EditPlayerAdapterCallback edt) {
+        callback = edt;
         mContext = c;
         descriptions2 = new String[descriptions.size()];
         images2 = new String[images.size()];
@@ -140,7 +145,8 @@ public class ImageLoad extends BaseAdapter {
             grid = (View)convertView;
         }
         TextView textView = (TextView) grid.findViewById(R.id.textView);
-        ImageView imageView = (ImageView)grid.findViewById(R.id.imageView);
+        final ImageView imageView = (ImageView)grid.findViewById(R.id.imageView);
+        Button btndelete = (Button)grid.findViewById(R.id.btnDelete);
         final TextView matchNumber = (TextView) grid.findViewById(R.id.matchNumber);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         matchNum = new ArrayList<List<String>>();
@@ -155,23 +161,27 @@ public class ImageLoad extends BaseAdapter {
                     for (DataSnapshot sp : snapshot.getChildren()) {
                         String strt = sp.child("startAddress").getValue(String.class);
                         //                        System.out.println(destid + "  " + strt);
-                        DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
-                        newRef.addValueEventListener(new ValueEventListener() {
-                            List<String> sublist = new ArrayList<String>();
-                            @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                                for (DataSnapshot sp : dataSnapshot.getChildren()) {
-                                    if(sp.getValue().equals(true)){
-                                        sublist.add(sp.getKey().toString());
+                        if (destid != null && strt != null) {
+                            DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
+                            newRef.addValueEventListener(new ValueEventListener() {
+                                List<String> sublist = new ArrayList<String>();
+                                @Override public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot sp : dataSnapshot.getChildren()) {
+                                        if(sp.getValue().equals(true)){
+                                            sublist.add(sp.getKey().toString());
+                                        }
+                                    }
+                                    matchNum.add(sublist);
+                                    if (position < matchNum.size()) {
+                                        matchNumber.setText(matchNum.get(position).size() + "");
                                     }
                                 }
-                                matchNum.add(sublist);
-                                if (position < matchNum.size()) {
-                                    matchNumber.setText(matchNum.get(position).size() + "");
+                                @Override public void onCancelled(DatabaseError databaseError) {
                                 }
-                            }
-                            @Override public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
+                            });
+
+                        }
+
 
                     }
                 }
@@ -180,6 +190,17 @@ public class ImageLoad extends BaseAdapter {
             }
 
             @Override public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        btndelete.setTag(position);
+        btndelete.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) {
+                int position=(Integer)view.getTag();
+                imageView.getLayoutParams().height = 0;
+                callback.deletePressed(position);
+                imageView.setClickable(false);
+//                imageView.setVisibility(View.GONE);
 
             }
         });
@@ -196,5 +217,16 @@ public class ImageLoad extends BaseAdapter {
             e.printStackTrace();
         }
         return grid;
+    }
+
+    public void setCallback(EditPlayerAdapterCallback callback){
+
+        this.callback = callback;
+    }
+
+
+    public interface EditPlayerAdapterCallback {
+
+        public void deletePressed(int position);
     }
 }

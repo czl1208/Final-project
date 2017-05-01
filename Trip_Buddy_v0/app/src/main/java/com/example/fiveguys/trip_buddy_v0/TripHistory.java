@@ -76,7 +76,7 @@ public class TripHistory extends AppCompatActivity {
                         String sAddress = sp.child("startAddress").getValue(String.class);
                         String dAddress = sp.child("destinationAddress").getValue(String.class);
                         String date = sp.getKey();
-                        boolean act = sp.child("activity").getValue(boolean.class);
+                        boolean act = sp.child("activity").getValue(Boolean.class);
                         Trip trip = new Trip(destid, sAddress,dAddress,date,act);
                        addList(trip);
                     }
