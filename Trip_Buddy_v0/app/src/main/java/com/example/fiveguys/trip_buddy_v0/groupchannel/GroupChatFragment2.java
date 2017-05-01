@@ -22,6 +22,7 @@ import com.example.fiveguys.trip_buddy_v0.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.fiveguys.trip_buddy_v0.groupchannel.GroupChannelListFragment2.matcheddestination;
 import static com.example.fiveguys.trip_buddy_v0.groupchannel.GroupChannelListFragment2.matchedusridlist;
 
 
@@ -362,7 +363,7 @@ public class GroupChatFragment2 extends Fragment {
     private void updateActionBarTitle() {
         String title = "";
         if(mChannel != null) {
-            title = TextUtils.getGroupChannelTitle(mChannel);
+           title = mChannel.getName();
         }
 
         // Set action bar title to name of channel

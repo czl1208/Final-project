@@ -39,10 +39,10 @@ public class GroupChannelListFragment2 extends Fragment {
     private GroupChannelListQuery mChannelListQuery;
     private SwipeRefreshLayout mSwipeRefresh;
     static List<String> matchedusridlist;
-    static Uri matcheddestphoto;
+    static String matcheddestphoto;
     static String matcheddestination;
 
-    public static GroupChannelListFragment2 newInstance(List<String> usridlist, Uri destphoto, String destination) {
+    public static GroupChannelListFragment2 newInstance(List<String> usridlist, String destphoto, String destination) {
         GroupChannelListFragment2 fragment = new GroupChannelListFragment2();
         matchedusridlist = usridlist;
         matcheddestphoto = destphoto;
@@ -65,7 +65,6 @@ public class GroupChannelListFragment2 extends Fragment {
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_group_channel_list2);
         mChannelListAdapter = new GroupChannelListAdapter(getActivity());
-        mCreateChannelFab = (FloatingActionButton) rootView.findViewById(R.id.fab_group_channel_list2);
 
         mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_layout_group_channel_list2);
 
@@ -76,19 +75,14 @@ public class GroupChannelListFragment2 extends Fragment {
                 refreshChannelList(15);
             }
         });
-//        mCreateChannelFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getContext(), CreateGroupChannelActivity.class);
-//                intent.putStringArrayListExtra("LIST", new ArrayList<String>(matchedusridlist));
-//                startActivityForResult(intent, INTENT_REQUEST_NEW_GROUP_CHANNEL);
-//            }
-//        });
+
 
         Intent intent = new Intent(getContext(), CreateGroupChannelActivity.class);
         intent.putStringArrayListExtra("LIST", new ArrayList<String>(matchedusridlist));
         intent.putExtra("DEST_PHOTO", matcheddestphoto);
+        Log.i("uri", matcheddestphoto);
         intent.putExtra("DESTINATION", matcheddestination);
+        Log.i("destination", matcheddestination);
 
 
 
@@ -146,6 +140,7 @@ public class GroupChannelListFragment2 extends Fragment {
         Log.d("LIFECYCLE", "GroupChannelListFragment onDetach()");
         super.onDetach();
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

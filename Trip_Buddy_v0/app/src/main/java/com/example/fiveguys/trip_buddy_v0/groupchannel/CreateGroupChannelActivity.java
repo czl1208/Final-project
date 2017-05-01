@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.fiveguys.trip_buddy_v0.Main;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -48,8 +49,8 @@ public class CreateGroupChannelActivity extends AppCompatActivity
 
     private Toolbar mToolbar;
     private List<String> usridlist;
-    static Uri destphoto;
-    static String destination;
+    private String destination;
+    private String photoUri;
 
 
 
@@ -61,7 +62,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
         usridlist = new ArrayList<>();
         usridlist = getIntent().getStringArrayListExtra("LIST");
         destination = getIntent().getStringExtra("DESTINATION");
-        destphoto = Uri.parse(getIntent().getStringExtra("DEST_PHOTO"));
+        photoUri = getIntent().getStringExtra("DEST_PHOTO");
 
         Log.d("userid", usridlist.toString());
         mSelectedIds = new ArrayList<>();
@@ -80,41 +81,24 @@ public class CreateGroupChannelActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (mCurrentState == STATE_SELECT_USERS) {
-                    Fragment fragment = SelectDistinctFragment.newInstance();
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container_create_group_channel, fragment)
-                            .addToBackStack(null)
-                            .commit();
+                    createGroupChannel(mSelectedIds, true);
                 }
             }
         });
         mNextButton.setEnabled(false);
 
-        mCreateButton = (Button) findViewById(R.id.button_create_group_channel_create);
-        mCreateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCurrentState == STATE_SELECT_DISTINCT) {
-                    Log.d("createGroupChannel", "ayyyyyyyyyyyyyyyyyyeeee 66666666");
-                    createGroupChannel(mSelectedIds, mIsDistinct);
-                }
-
-            }
-        });
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar_create_group_channel);
         setSupportActionBar(mToolbar);
+
 
     }
 
     void setState(int state) {
         if (state == STATE_SELECT_USERS) {
             mCurrentState = STATE_SELECT_USERS;
-            mCreateButton.setVisibility(View.GONE);
             mNextButton.setVisibility(View.VISIBLE);
         } else if (state == STATE_SELECT_DISTINCT){
             mCurrentState = STATE_SELECT_DISTINCT;
-            mCreateButton.setVisibility(View.VISIBLE);
             mNextButton.setVisibility(View.GONE);
         }
     }
@@ -152,13 +136,15 @@ public class CreateGroupChannelActivity extends AppCompatActivity
      *                  the existing channel instance will be returned.
      */
     private void createGroupChannel(List<String> userIds, boolean distinct) {
-        GroupChannel.createChannelWithUserIds(userIds, distinct, destination, destphoto, "", new GroupChannel.GroupChannelCreateHandler() {
+        GroupChannel.createChannelWithUserIds(userIds, true, destination, photoUri, "", new GroupChannel.GroupChannelCreateHandler() {
             @Override
             public void onResult(GroupChannel groupChannel, SendBirdException e) {
                 if (e != null) {
                     // Error!
                     return;
                 }
+
+                Log.i("name", destination);
                 Intent intent = new Intent();
                 intent.putExtra(EXTRA_NEW_CHANNEL_URL, groupChannel.getUrl());
                 setResult(RESULT_OK, intent);
@@ -168,5 +154,9 @@ public class CreateGroupChannelActivity extends AppCompatActivity
         });
     }
 
-
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(CreateGroupChannelActivity.this, Main.class);
+        startActivity(intent);
+    }
 }

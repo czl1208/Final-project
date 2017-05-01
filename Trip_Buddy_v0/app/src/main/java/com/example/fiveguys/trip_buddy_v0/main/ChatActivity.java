@@ -16,9 +16,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fiveguys.trip_buddy_v0.Main;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -44,24 +46,15 @@ public class ChatActivity extends AppCompatActivity {
 
 
         // Set up app bar
-        // mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        // setSupportActionBar(mToolbar);
+         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+         setSupportActionBar(mToolbar);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-        }
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_main);
-        mNavView = (NavigationView) findViewById(R.id.nav_view_main);
+        // mNavView = (NavigationView) findViewById(R.id.nav_view_main);
 
-        //setUpNavigationDrawer();
-        setUpDrawerToggle();
-
-        // Displays the SDK version in a TextView
-        String sdkVersion = String.format(getResources().getString(R.string.all_app_version),
-                BaseApplication.VERSION, SendBird.getSDKVersion());
-        ((TextView) findViewById(R.id.text_main_versions)).setText(sdkVersion);
+        // setUpNavigationDrawer();
+        // setUpDrawerToggle();
 
 
         if(savedInstanceState == null) {
@@ -131,15 +124,15 @@ public class ChatActivity extends AppCompatActivity {
         Log.i("d","pause");
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            mDrawerLayout.openDrawer(GravityCompat.START);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        if (id == android.R.id.home) {
+//            mDrawerLayout.openDrawer(GravityCompat.START);
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -185,6 +178,8 @@ public class ChatActivity extends AppCompatActivity {
 //        });
 //    }
 
+
+
     /**
      * Configures the hamburger icon to react to navigation drawer state changes.
      */
@@ -214,20 +209,20 @@ public class ChatActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
 
         // Remove hamburger icon if a fragment is added.
-//        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-//            @Override
-//            public void onBackStackChanged() {
-//
-//                if(getSupportFragmentManager().getBackStackEntryCount() > 0){
-//                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//                }
-//                else {
-//                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//                    mDrawerToggle.setDrawerIndicatorEnabled(true);
-//                    mDrawerToggle.syncState();
-//                }
-//            }
-//        });
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+
+                if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                }
+                else {
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    mDrawerToggle.setDrawerIndicatorEnabled(true);
+                    mDrawerToggle.syncState();
+                }
+            }
+        });
     }
 
     /**

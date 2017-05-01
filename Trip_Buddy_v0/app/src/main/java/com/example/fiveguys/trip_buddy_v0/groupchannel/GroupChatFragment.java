@@ -348,7 +348,7 @@ public class GroupChatFragment extends Fragment {
     private void updateActionBarTitle() {
         String title = "";
         if(mChannel != null) {
-            title = TextUtils.getGroupChannelTitle(mChannel);
+            title = mChannel.getName();
         }
 
         // Set action bar title to name of channel

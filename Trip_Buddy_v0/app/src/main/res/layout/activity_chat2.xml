@@ -14,20 +14,21 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_main2"
             android:layout_width="match_parent"
+            android:gravity="center"
             android:theme="@style/Toolbar"
             android:layout_height="50dp"
             app:popupTheme="@style/Theme.AppCompat.Light">
 
         </android.support.v7.widget.Toolbar>
 
-        <Button
-            android:id="@+id/btnBack"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginTop="-42dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:background="@drawable/ic_back_arrow" />
+        <!--<Button-->
+            <!--android:id="@+id/btnBack"-->
+            <!--android:layout_width="36dp"-->
+            <!--android:layout_height="36dp"-->
+            <!--android:layout_marginTop="-42dp"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="@drawable/ic_back_arrow" />-->
 
     </android.support.design.widget.AppBarLayout>
 
@@ -46,27 +47,6 @@
         </FrameLayout>
 
 
-
-        <!-- The navigation drawer -->
-        <android.support.design.widget.NavigationView
-            android:id="@+id/nav_view_main2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            app:menu="@menu/drawer_view">
-
-            <TextView
-                android:id="@+id/text_main_versions2"
-                android:text="@string/all_app_version"
-                android:textSize="12sp"
-                android:textColor="#8e8e8e"
-                android:layout_gravity="center_horizontal|bottom"
-                android:layout_marginBottom="16dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-
-        </android.support.design.widget.NavigationView>
 
     </android.support.v4.widget.DrawerLayout>
 
