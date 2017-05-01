@@ -50,7 +50,7 @@ public class TripHistory extends AppCompatActivity {
         //getSupportActionBar().up
         backBtn = (Button)findViewById(R.id.backBtn);
         historyList = (ListView)findViewById(R.id.historyList);
-        User = FirebaseDatabase.getInstance().getReference("/users/"+uid);
+        User = FirebaseDatabase.getInstance().getReference("/tripHistory/"+uid);
         historyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -78,7 +78,7 @@ public class TripHistory extends AppCompatActivity {
                         String date = sp.getKey();
                         boolean act = sp.child("activity").getValue(boolean.class);
                         Trip trip = new Trip(destid, sAddress,dAddress,date,act);
-                       addList(trip);
+                        addList(trip);
                     }
                 }
                 activeList.addAll(deactList);
