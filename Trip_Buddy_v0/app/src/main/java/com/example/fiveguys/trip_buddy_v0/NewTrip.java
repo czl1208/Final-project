@@ -232,6 +232,15 @@ public class NewTrip extends FragmentActivity
                     if(photoUrl != null)
                     trip.child("photoUrl").setValue(photoUrl.toString());
                     trip.child("activity").setValue(true);
+                    trip = database.getReference("/tripHistory/"+uid+"/trips/"+sId+"/"+timestamp);
+                    trip.child("startAddress").setValue(startAddress);
+                    trip.child("startLocation").setValue(startLocation);
+                    trip.child("destinationName").setValue(sPlace);
+                    trip.child("destinationAddress").setValue(sAddress);
+                    trip.child("destinationLocation").setValue(sLocation);
+                    if(photoUrl != null)
+                        trip.child("photoUrl").setValue(photoUrl.toString());
+                    trip.child("activity").setValue(true);
                     Toast toast = Toast.makeText(getApplicationContext(), "Your Jouney Begins", Toast.LENGTH_SHORT);
                     toast.show();
                     DesLayout = false;
