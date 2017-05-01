@@ -23,6 +23,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -73,6 +74,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Main extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ImageLoad.EditPlayerAdapterCallback
@@ -146,8 +148,13 @@ public class Main extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), NewTrip.class);
-                startActivity(intent);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user.isEmailVerified()) {
+                    Intent intent = new Intent(getApplicationContext(), NewTrip.class);
+                    startActivity(intent);
+                }else{
+                    alert("Please verify your email before adding trips");
+                }
             }
         });
 
@@ -305,7 +312,7 @@ public class Main extends AppCompatActivity
                         uid = user.getUid();
                         database = FirebaseDatabase.getInstance();
                         myRef = database.getReference();
-                        myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener
+                        myRef.child("users").child(uid).child("trips").addListenerForSingleValueEvent(new ValueEventListener
                                                                                                          () {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -323,11 +330,11 @@ public class Main extends AppCompatActivity
                                             String strt1 = matches.get(position).second.toString();
                                             myRef.child("trips").child(""+dest1).child(strt1).child(uid).setValue(false);
 
-                                            myRef.child("tripHistory").child(uid).child("trips").child(""+dest1).addValueEventListener(new ValueEventListener() {
+                                            myRef.child("tripHistory").child(uid).child("trips").child(""+dest1).addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                                        System.out.println("++++++++++++++++++++" + snapshot);
+                                                       // System.out.println("++++++++++++++++++++" + snapshot);
                                                         snapshot.child("activity").getRef().setValue(false);
                                                     }
                                                 }
@@ -336,11 +343,11 @@ public class Main extends AppCompatActivity
                                                 }
                                             });
 
-                                            myRef.child("users").child(uid).child("trips").child(""+dest1).addValueEventListener(new ValueEventListener() {
+                                            myRef.child("users").child(uid).child("trips").child(""+dest1).addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                                        System.out.println("++++++++++++++++++++" + snapshot);
+                                                        //System.out.println("++++++++++++++++++++" + snapshot);
                                                         snapshot.getRef().removeValue();
                                                     }
                                                 }
@@ -361,7 +368,13 @@ public class Main extends AppCompatActivity
                             public void onCancelled(DatabaseError databaseError) {
                             }
                         });
-                        recreate();
+                        if(position == 0) {
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(200);
+                            } catch (Exception e) {
+                            }
+                            recreate();
+                        }
 
                     }
                 });
@@ -541,7 +554,11 @@ public class Main extends AppCompatActivity
             }
         });
     }
-
+    public void alert(String s) {
+        Toast toast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
 
 
 }

@@ -302,7 +302,7 @@ public class NewTrip extends FragmentActivity
                         addresses = gcd.getFromLocation(cLocation.latitude, cLocation.longitude, 1);
 
                         if (addresses.size() > 0)
-                            System.out.println(addresses.get(0).getLocality());
+                           // System.out.println(addresses.get(0).getLocality());
                         address.append(addresses.get(0).getAddressLine(1))
                                 .append(addresses.get(0).getAddressLine(2));
                         address1.append(addresses.get(0).getAddressLine(1));
@@ -441,7 +441,7 @@ public class NewTrip extends FragmentActivity
                 addresses = gcd.getFromLocation(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1);
 
                 if (addresses.size() > 0)
-                    System.out.println(addresses.get(0).getLocality());
+                   // System.out.println(addresses.get(0).getLocality());
                 address.append(addresses.get(0).getAddressLine(1))
                         .append(addresses.get(0).getAddressLine(2));
                 address1.append(addresses.get(0).getAddressLine(1));
