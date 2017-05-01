@@ -14,7 +14,9 @@
             android:id="@+id/toolbar_member_list"
             android:layout_width="match_parent"
             android:theme="@style/Toolbar"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="50dp"
+            android:background="@color/WordDark"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
         </android.support.v7.widget.Toolbar>
 

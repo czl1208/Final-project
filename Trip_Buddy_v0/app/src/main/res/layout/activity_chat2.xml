@@ -17,7 +17,8 @@
             android:gravity="center"
             android:theme="@style/Toolbar"
             android:layout_height="50dp"
-            app:popupTheme="@style/Theme.AppCompat.Light">
+            android:background="@color/WordDark"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
         </android.support.v7.widget.Toolbar>
 

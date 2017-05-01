@@ -22,7 +22,9 @@
             android:id="@+id/toolbar_create_group_channel"
             android:layout_width="match_parent"
             android:theme="@style/Toolbar"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="50dp"
+            android:background="@color/WordDark"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <Button
                 android:id="@+id/button_create_group_channel_create"
