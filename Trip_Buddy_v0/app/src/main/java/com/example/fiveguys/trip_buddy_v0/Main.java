@@ -158,6 +158,15 @@ public class Main extends AppCompatActivity
             }
         });
 
+        FloatingActionButton chatFab = (FloatingActionButton) findViewById(R.id.chatFab);
+        chatFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

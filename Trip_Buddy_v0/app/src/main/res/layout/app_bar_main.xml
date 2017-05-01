@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.example.fiveguys.trip_buddy_v0.Main">
 
-    <include layout="@layout/content_main" />
+    <include layout="@layout/content_main"
+        android:id="@+id/include" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -16,6 +17,16 @@
         android:layout_margin="@dimen/fab_margin"
         android:scaleType="center"
         app:srcCompat="@drawable/ic_menu_new" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/chatFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        app:fabSize="normal"
+        app:srcCompat="@android:drawable/sym_action_chat" />
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -27,8 +38,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:title=""
             android:background="@color/WordDark"
+            android:title=""
 
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -38,11 +49,12 @@
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-40dp"
             android:layout_gravity="center"
+            android:layout_marginTop="-40dp"
             app:srcCompat="@drawable/logo" />
 
 
     </android.support.design.widget.AppBarLayout>
+
 </android.support.design.widget.CoordinatorLayout>
 
