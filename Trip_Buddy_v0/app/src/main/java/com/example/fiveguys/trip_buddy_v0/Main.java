@@ -1,6 +1,8 @@
 package com.example.fiveguys.trip_buddy_v0;
+import com.example.fiveguys.trip_buddy_v0.ImageLoad;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -16,7 +18,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +33,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -70,23 +75,24 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Main extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener
+        implements NavigationView.OnNavigationItemSelectedListener, ImageLoad.EditPlayerAdapterCallback
 {
 
     private static final int INTENT_REQUEST_NEW_GROUP_CHANNEL = 302;
     String username, email, uid, age;
     Uri photoUrl;
+    private boolean deleted = false;
     FirebaseDatabase database;
     DatabaseReference myRef;
     StorageReference mStorageRef;
-    List<String> urilist, destinations;
-    List<String> matches;
+    public static List<String> urilist, destinations;
+    List<Pair> matches;
     GridView grid;
-    HashMap<String, List<String>> hm;
     public static List<List<String>> list = new ArrayList<>();
     public  static List<List<String>> totList;
     private static final String TAG = Main.class.getSimpleName();
     private NavigationView mNavView;
+    public static boolean check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,12 +165,13 @@ public class Main extends AppCompatActivity
         TextView nav_email = (TextView) header.findViewById(R.id.nav_email);
         ImageView nav_image = (ImageView) header.findViewById(R.id.nav_image);
 
-        hm = new HashMap<>();
+        matches = new ArrayList<>();
 
         myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener
                                                                                        () {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        check = false;
                         urilist.clear();
                         destinations.clear();
                         list.clear();
@@ -175,53 +182,58 @@ public class Main extends AppCompatActivity
                                 String url = sp.child("photoUrl").getValue(String.class);
                                 String des = sp.child("destinationName").getValue(String.class);
                                 final String strt = sp.child("startAddress").getValue(String.class);
-                                String dest = sp.child("destinationAddress").getValue(String.class);
-                                DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
-                                newRef.addValueEventListener(new ValueEventListener() {
-                                    @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                                        List<String> sublist = new ArrayList<String>();
-                                        for (DataSnapshot sp : dataSnapshot.getChildren()) {
-                                            System.out.println("++++++++++++++++" + sp.getValue());
-                                            if(sp.getValue().equals(true)){
-                                                sublist.add(sp.getKey().toString());
+                                final String dest = sp.child("destinationAddress").getValue(String.class);
+                                // check if this is true
+                                if (destid != null && strt != null) {
+                                    DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
+                                    newRef.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            List<String> sublist = new ArrayList<String>();
+                                            for (DataSnapshot sp : dataSnapshot.getChildren()) {
+                                                if (sp.getValue().equals(true)) {
+                                                    check = true;
+                                                    sublist.add(sp.getKey().toString());
+                                                }
+                                                totList.add(sublist);
                                             }
-                                            totList.add(sublist);
-
+                                            Log.d("totalList",totList.size()+"");
+                                            final ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, new ImageLoad.EditPlayerAdapterCallback() {
+                                                @Override
+                                                public void deletePressed(int position) {
+                                                    deletePlayer(position);
+//                                                    if (position < urilist.size()) {
+//                                                        urilist.remove(position);
+//                                                        destinations.remove(position);
+//                                                    }
+                                                }
+                                            });
+                                            adapter.notifyDataSetChanged();
+                                            grid = (GridView) findViewById(R.id.gridview);
+                                            grid.setAdapter(adapter);
+                                            grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                    Toast.makeText(Main.this, "You Clicked at " + totList.get(i),
+                                                            Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(Main.this, Chat2Activity.class);
+                                                    intent.putStringArrayListExtra("LIST", new ArrayList<String>(totList.get(i)));
+                                                    startActivity(intent);
+                                                }
+                                            });
                                         }
-//                                        Log.d("totalList", Arrays.toString(totList.toArray()));
-                                        ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations,totList);
-                                        grid=(GridView)findViewById(R.id.gridview);
-                                        grid.setAdapter(adapter);
-                                        grid.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-                                            @Override
-                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                Toast.makeText(Main.this, "You Clicked at " +totList.get(i),
-                                                        Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(Main.this, Chat2Activity.class);
-                                                intent.putStringArrayListExtra("LIST", new ArrayList<String>(totList.get(i)));
-                                                intent.putExtra("DESTINATION", String.valueOf(destinations.get(i)));
-                                                intent.putExtra("DEST_PHOTO", urilist.get(i));
-                                                startActivity(intent);
-                                            }
-                                        });
-
-
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                        }
+                                    });
+                                    if (sp.child("activity").exists() && sp.child("activity").getValue(Boolean.class) ==true) {
+                                        addDesList(des);
+                                        addurlList(url);
                                     }
-                                    @Override public void onCancelled(DatabaseError databaseError) {
-                                    }
-                                });
-                                urilist.add(url);
-                                destinations.add(des);
-
+                                }
                             }
                         }
-
-
                     }
-
-
-
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
@@ -240,41 +252,6 @@ public class Main extends AppCompatActivity
         }
 
 
-//        myRef.child("users").addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    Log.d("HashMap", snapshot.getKey());
-//                    for (DataSnapshot sp : snapshot.getChildren()) { // for each user
-//
-//                        for (DataSnapshot sp2 : sp.getChildren()) {
-//                            for (DataSnapshot sp3 : sp2.getChildren()) {
-////                                Log.d("EACH TRIP", sp3.getKey());
-//                                String start = sp3.child("startAddress").getValue(String.class);
-//                                String end = sp3.child("destinationAddress").getValue(String.class);
-//                                String key = start+end;
-////                                Log.i("KeyNew", key);
-//                                System.out.println("Line 175" + key);
-//                                if (hm.containsKey(key)) {
-//                                    List<String> list = hm.get(key);
-//                                    list.add(snapshot.getKey());
-//                                    hm.put(key,list);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                System.out.println("LINE 182" + Arrays.asList(hm)); // method 1
-//                int matchNum = hm.size();
-//                ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, matchNum);
-//                grid=(GridView)findViewById(R.id.gridview);
-//                grid.setAdapter(adapter);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
 
 
         // pass matches to it
@@ -302,9 +279,113 @@ public class Main extends AppCompatActivity
         if(photoUrl != null) {
             Picasso.with(getApplicationContext()).load(photoUrl.toString()).into(nav_image);
         }
+       // nav_image.setImageURI(photoUrl);
 
 
     }
+
+    private void addurlList(String url) {
+        urilist.add(url);
+    }
+
+    private void addDesList(String des) {
+        destinations.add(des);
+    }
+
+    private void deletePlayer(final int position) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Main.this);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Delete A Trip");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Are you sure?");
+
+        // Setting Delete Button
+        alertDialog.setPositiveButton("Delete",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        uid = user.getUid();
+                        database = FirebaseDatabase.getInstance();
+                        myRef = database.getReference();
+                        myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener
+                                                                                                         () {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    String destid = snapshot.getKey();
+                                    for (DataSnapshot sp : snapshot.getChildren()) {
+                                        final String strt = sp.child("startAddress").getValue(String.class);
+                                        Log.d("strt", strt);
+                                        Log.d("dest", destid);
+                                        Pair pair = new Pair(destid, strt);
+                                        matches.add(pair);
+                                        Log.i("matches", Arrays.toString(matches.toArray()));
+                                        if (position < matches.size()) {
+                                            String dest1 = matches.get(position).first.toString();
+                                            String strt1 = matches.get(position).second.toString();
+                                            myRef.child("trips").child(""+dest1).child(strt1).child(uid).setValue(false);
+
+                                            myRef.child("tripHistory").child(uid).child("trips").child(""+dest1).addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                        System.out.println("++++++++++++++++++++" + snapshot);
+                                                        snapshot.child("activity").getRef().setValue(false);
+                                                    }
+                                                }
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+                                                }
+                                            });
+
+                                            myRef.child("users").child(uid).child("trips").child(""+dest1).addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                        System.out.println("++++++++++++++++++++" + snapshot);
+                                                        snapshot.getRef().removeValue();
+                                                    }
+                                                }
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+                                                }
+                                            });
+
+                                        }
+
+
+                                    }
+
+
+                                }
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                        recreate();
+
+                    }
+                });
+
+        // Setting Cancel Button
+        alertDialog.setNeutralButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        // Showing Alert Message
+        alertDialog.show();
+    }
+
+    public void deletePressed(int position) {
+        deletePlayer(position);
+    }
+
+
 
     @Override
     protected void onStart() {

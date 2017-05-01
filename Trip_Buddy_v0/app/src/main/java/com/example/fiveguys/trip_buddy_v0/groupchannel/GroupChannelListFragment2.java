@@ -84,8 +84,6 @@ public class GroupChannelListFragment2 extends Fragment {
         intent.putExtra("DESTINATION", matcheddestination);
         Log.i("destination", matcheddestination);
 
-
-
         startActivityForResult(intent, INTENT_REQUEST_NEW_GROUP_CHANNEL);
 
         setUpRecyclerView();
