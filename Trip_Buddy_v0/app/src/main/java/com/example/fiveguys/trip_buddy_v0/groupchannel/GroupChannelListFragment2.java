@@ -80,9 +80,9 @@ public class GroupChannelListFragment2 extends Fragment {
         Intent intent = new Intent(getContext(), CreateGroupChannelActivity.class);
         intent.putStringArrayListExtra("LIST", new ArrayList<String>(matchedusridlist));
         intent.putExtra("DEST_PHOTO", matcheddestphoto);
-        Log.i("uri", matcheddestphoto);
+//        Log.i("uri", matcheddestphoto);
         intent.putExtra("DESTINATION", matcheddestination);
-        Log.i("destination", matcheddestination);
+//        Log.i("destination", matcheddestination);
 
         startActivityForResult(intent, INTENT_REQUEST_NEW_GROUP_CHANNEL);
 

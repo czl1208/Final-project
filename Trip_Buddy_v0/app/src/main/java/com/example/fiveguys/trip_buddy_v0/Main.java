@@ -171,7 +171,6 @@ public class Main extends AppCompatActivity
                                                                                        () {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        check = false;
                         urilist.clear();
                         destinations.clear();
                         list.clear();
@@ -184,7 +183,6 @@ public class Main extends AppCompatActivity
                                 final String strt = sp.child("startAddress").getValue(String.class);
                                 final String dest = sp.child("destinationAddress").getValue(String.class);
                                 // check if this is true
-                                if (destid != null && strt != null) {
                                     DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
                                     newRef.addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -216,6 +214,7 @@ public class Main extends AppCompatActivity
                                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                                     Toast.makeText(Main.this, "You Clicked at " + totList.get(i),
                                                             Toast.LENGTH_SHORT).show();
+                                                    Log.d("TotList", Arrays.toString(totList.toArray()));
                                                     Intent intent = new Intent(Main.this, Chat2Activity.class);
                                                     intent.putStringArrayListExtra("LIST", new ArrayList<String>(totList.get(i)));
                                                     startActivity(intent);
@@ -226,11 +225,8 @@ public class Main extends AppCompatActivity
                                         public void onCancelled(DatabaseError databaseError) {
                                         }
                                     });
-                                    if (sp.child("activity").exists() && sp.child("activity").getValue(Boolean.class) ==true) {
-                                        addDesList(des);
-                                        addurlList(url);
-                                    }
-                                }
+                                    urilist.add(url);
+                                    destinations.add(des);
                             }
                         }
                     }

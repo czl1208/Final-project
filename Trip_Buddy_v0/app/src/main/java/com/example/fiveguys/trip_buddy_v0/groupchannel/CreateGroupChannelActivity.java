@@ -144,7 +144,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
                     return;
                 }
 
-                Log.i("name", destination);
+//                Log.i("name", destination);
                 Intent intent = new Intent();
                 intent.putExtra(EXTRA_NEW_CHANNEL_URL, groupChannel.getUrl());
                 setResult(RESULT_OK, intent);
