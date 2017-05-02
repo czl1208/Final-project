@@ -89,16 +89,16 @@ public class ImageLoad extends BaseAdapter {
     private String[] descriptions2;
     private  Integer[] numberlist2;
     private FirebaseDatabase database;
-    private DatabaseReference myRef;
+    private DataSnapshot dataSnapshot;
     private String uid;
     private ArrayList<List<String>> matchNum;
     private EditPlayerAdapterCallback callback;
-    public ImageLoad(Context c, DatabaseReference Ref, List<String> images,List<String> descriptions,
+    public ImageLoad(Context c, DataSnapshot Ref, List<String> images,List<String> descriptions,
                      EditPlayerAdapterCallback edt) {
         callback = edt;
         mContext = c;
         descriptions2 = new String[descriptions.size()];
-        myRef = Ref;
+        dataSnapshot = Ref;
         images2 = new String[images.size()];
         numberlist2 = new Integer[images.size()];
         for (int i=0;i<descriptions.size(); i++) {
@@ -157,9 +157,8 @@ public class ImageLoad extends BaseAdapter {
         if(user != null)
         uid = user.getUid();
         database = FirebaseDatabase.getInstance();
-        myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                DataSnapshot tripref = dataSnapshot.child("users").child(uid).child("trips");
+                for (DataSnapshot snapshot : tripref.getChildren()) {
                     String destid = snapshot.getKey(); // only one destination
                     for (DataSnapshot sp : snapshot.getChildren()) {
                         String strt = sp.child("startAddress").getValue(String.class);
@@ -189,13 +188,6 @@ public class ImageLoad extends BaseAdapter {
                     }
                 }
 
-
-            }
-
-            @Override public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
         btndelete.setTag(position);
         btndelete.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {

@@ -227,7 +227,10 @@ public class Main extends AppCompatActivity
             Picasso.with(getApplicationContext()).load(photoUrl.toString()).into(nav_image);
         }
        // nav_image.setImageURI(photoUrl);
-
+    try{
+         TimeUnit.MILLISECONDS.sleep(500);
+        } catch (Exception e) {}
+        refreshGrid();
 
     }
 
@@ -271,7 +274,7 @@ public class Main extends AppCompatActivity
                         numberList.add(sublist.size());
                         destinations.add(des);
                         // Log.d("totalList",totList.size()+"");
-                        final ImageLoad adapter = new ImageLoad(Main.this, myRef, urilist, destinations, new ImageLoad.EditPlayerAdapterCallback() {
+                        final ImageLoad adapter = new ImageLoad(Main.this, dataSnapshot, urilist, destinations, new ImageLoad.EditPlayerAdapterCallback() {
                             @Override
                             public void deletePressed(int position) {
                                 deletePlayer(position);
