@@ -287,6 +287,8 @@ public class Main extends AppCompatActivity
                                         //Log.d("TotList", Arrays.toString(totList.toArray()));
                                         Intent intent = new Intent(Main.this, Chat2Activity.class);
                                         intent.putStringArrayListExtra("LIST", new ArrayList<String>(totList.get(i)));
+                                        intent.putExtra("DESTINATION", String.valueOf(destinations.get(i)));
+                                        intent.putExtra("DEST_PHOTO", urilist.get(i));
                                         startActivity(intent);
                                     }
                                 });
