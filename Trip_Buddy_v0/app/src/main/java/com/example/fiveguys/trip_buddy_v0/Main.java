@@ -227,11 +227,17 @@ public class Main extends AppCompatActivity
             Picasso.with(getApplicationContext()).load(photoUrl.toString()).into(nav_image);
         }
        // nav_image.setImageURI(photoUrl);
-    try{
-         TimeUnit.MILLISECONDS.sleep(500);
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try{
+            TimeUnit.MILLISECONDS.sleep(500);
         } catch (Exception e) {}
         refreshGrid();
-
     }
 
     public void refreshGrid(){
