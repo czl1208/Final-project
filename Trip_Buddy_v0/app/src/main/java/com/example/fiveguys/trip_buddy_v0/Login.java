@@ -78,7 +78,7 @@ public class Login extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
+        if (user != null && user.isEmailVerified()) {
             Intent intent = new Intent(getApplicationContext(), Main.class);
             startActivity(intent);
             finish();
