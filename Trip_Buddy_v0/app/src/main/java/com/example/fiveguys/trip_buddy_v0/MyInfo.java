@@ -180,10 +180,10 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
             UserProfileChangeRequest profile = new UserProfileChangeRequest.Builder()
                     .setDisplayName(username).build();
             user.updateProfile(profile);
-            edtUserName.setBackground(getDrawable(R.color.LoginBackground));
-            edtUserFav.setBackground(getDrawable(R.color.LoginBackground));
-            edtUserSex.setBackground(getDrawable(R.color.LoginBackground));
-            edtUserAge.setBackground(getDrawable(R.color.LoginBackground));
+            edtUserName.setBackground(getDrawable(R.color.colorPrimary));
+            edtUserFav.setBackground(getDrawable(R.color.colorPrimary));
+            edtUserSex.setBackground(getDrawable(R.color.colorPrimary));
+            edtUserAge.setBackground(getDrawable(R.color.colorPrimary));
             edtUserName.setEnabled(false);
             edtUserFav.setEnabled(false);
             edtUserSex.setEnabled(false);

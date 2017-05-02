@@ -5,6 +5,7 @@ xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:background="@color/LoginBackground"
 android:layout_height="match_parent"
+    android:gravity="center"
 tools:context="com.example.fiveguys.trip_buddy_v0.Login">
 
 <Button
@@ -115,7 +116,7 @@ tools:context="com.example.fiveguys.trip_buddy_v0.Login">
     android:background="@color/LoginBackground"
     android:text="Forget your password?"
     android:textAllCaps="false"
-    android:textSize="8sp"
+    android:textSize="15sp"
     android:layout_above="@+id/btnSignin"
     android:layout_alignEnd="@+id/edtPassword"
     android:layout_marginBottom="34dp" />

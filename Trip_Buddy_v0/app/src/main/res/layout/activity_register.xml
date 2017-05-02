@@ -31,9 +31,10 @@
 
         <EditText
             android:id="@+id/edtUser"
+            android:gravity="center"
             style="@style/edtTextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="50dp" />
+            android:layout_width="250dp"
+            android:layout_height="40dp" />
 
         <TextView
                 android:id="@+id/txtEmail"
@@ -48,8 +49,9 @@
                 android:textStyle="bold" />
             <EditText
                 style="@style/edtTextStyle"
-                android:layout_height="50dp"
-                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_width="250dp"
                 android:id="@+id/edtEmail"
                 />
 
@@ -65,8 +67,9 @@
 
         <EditText
                 style="@style/edtTextStyle"
-                android:layout_height="50dp"
-                android:layout_width="370dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_width="250dp"
                 android:inputType="textPassword"
                 android:id="@+id/edtPassword"
                 />
@@ -82,18 +85,19 @@
                 android:textStyle="bold" />
             <EditText
                 style="@style/edtTextStyle"
-                android:layout_height="50dp"
-                android:layout_width="370dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_width="250dp"
                 android:inputType="textPassword"
                 android:id="@+id/edtPassword2"
                 />
 
 
-            <Button
+        <Button
                 android:id="@+id/btnConfirm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="40dp"
                 android:background="@color/WordDark"
                 android:onClick="onClickConfirm"
                 android:text="Confirm"
@@ -104,19 +108,19 @@
                 android:textStyle="bold" />
 
         <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="104dp"
-            android:layout_marginTop="5dp"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:background="@color/WordLight"
-            android:onClick="onClickCancel"
-            android:text="Cancel"
-            android:textAllCaps="false"
-            android:textColor="@color/colorPrimary"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_weight="0.10" />
+                android:id="@+id/btnCancel"
+                android:layout_width="150dp"
+                android:layout_marginTop="7dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:background="@color/WordLight"
+                android:onClick="onClickCancel"
+                android:text="Cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                 />
 
 
     </LinearLayout>
