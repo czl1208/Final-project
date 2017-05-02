@@ -226,18 +226,24 @@ public class Main extends AppCompatActivity
         if(photoUrl != null) {
             Picasso.with(getApplicationContext()).load(photoUrl.toString()).into(nav_image);
         }
-       // nav_image.setImageURI(photoUrl);
-
-
+       // nav_image.setImageURI(photoUrl)
+        new Thread(new Runnable() {
+            public void run() {
+                // a potentially  time consuming task
+                try{
+                    TimeUnit.MILLISECONDS.sleep(1000);
+                } catch (Exception e) {}
+                refreshGrid();
+            }
+        }).start();
     }
-
     @Override
     protected void onResume() {
         super.onResume();
-        try{
-            TimeUnit.MILLISECONDS.sleep(500);
-        } catch (Exception e) {}
-        refreshGrid();
+//        try{
+//            TimeUnit.MILLISECONDS.sleep(800);
+//        } catch (Exception e) {}
+//        refreshGrid();
     }
 
     public void refreshGrid(){
@@ -304,6 +310,7 @@ public class Main extends AppCompatActivity
                                         intent.putExtra("DESTINATION", String.valueOf(destinations.get(i)));
                                         intent.putExtra("DEST_PHOTO", urilist.get(i));
                                         startActivity(intent);
+                                        finish();
                                     }
                                 });
 
