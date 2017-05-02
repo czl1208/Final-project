@@ -122,7 +122,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="edit your profile"
-        android:textColor="@color/com_facebook_button_send_background_color_pressed"
+        android:textColor="@color/DarkGreen"
         android:layout_below="@+id/edtUserFav"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp" />

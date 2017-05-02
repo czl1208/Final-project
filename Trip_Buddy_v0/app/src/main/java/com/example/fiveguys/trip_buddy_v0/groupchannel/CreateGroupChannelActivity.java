@@ -158,5 +158,6 @@ public class CreateGroupChannelActivity extends AppCompatActivity
     public void onBackPressed() {
         Intent intent = new Intent(CreateGroupChannelActivity.this, Main.class);
         startActivity(intent);
+        finish();
     }
 }

@@ -140,6 +140,7 @@ public class Chat2Activity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent(Chat2Activity.this, Main.class);
         startActivity(intent);
+        finish();
     }
 
     //    @Override

@@ -477,8 +477,6 @@ public class Main extends AppCompatActivity
             startActivity(intent);
         } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_share) {
-
         } else if (id == R.id.nav_logout) {
             LoginManager.getInstance().logOut();
             FirebaseAuth.getInstance().signOut();
