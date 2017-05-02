@@ -74,6 +74,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.android.gms.R.id.auto;
 import static com.google.android.gms.R.id.url;
@@ -244,8 +245,12 @@ public class NewTrip extends FragmentActivity
                     Toast toast = Toast.makeText(getApplicationContext(), "Your Jouney Begins", Toast.LENGTH_SHORT);
                     toast.show();
                     DesLayout = false;
-//                    Intent intent = new Intent(getApplicationContext(), Main.class);
-//                    startActivity(intent);
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(200);
+                    } catch (Exception e) {
+                    }
+                    Intent intent = new Intent(getApplicationContext(), Main.class);
+                    startActivity(intent);
                     finish();
 
                 } else {
@@ -593,7 +598,7 @@ public class NewTrip extends FragmentActivity
                     PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
                     CharSequence attribution = photo.getAttributions();
                     // Load a scaled bitmap for this photo.
-                    Bitmap image = photo.getPhoto(mGoogleApiClient).await()
+                    Bitmap image = photo.getScaledPhoto(mGoogleApiClient,600, 800).await()
                             .getBitmap();
 
                     attributedPhoto = new com.example.fiveguys.trip_buddy_v0.NewTrip.PhotoTask.AttributedPhoto(attribution, image);

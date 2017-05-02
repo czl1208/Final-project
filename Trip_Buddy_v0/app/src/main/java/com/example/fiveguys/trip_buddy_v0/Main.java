@@ -10,6 +10,7 @@ import android.location.Location;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -138,7 +139,7 @@ public class Main extends AppCompatActivity
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //refreshGrid();
+                refreshGrid();
                 refresh.setRefreshing(false);
             }
         });
@@ -181,75 +182,7 @@ public class Main extends AppCompatActivity
         TextView nav_email = (TextView) header.findViewById(R.id.nav_email);
         ImageView nav_image = (ImageView) header.findViewById(R.id.nav_image);
 
-        matches = new ArrayList<>();
 
-        myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener
-                                                                                       () {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        urilist.clear();
-                        destinations.clear();
-                        list.clear();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String destid = snapshot.getKey();
-                            for (DataSnapshot sp : snapshot.getChildren()) {
-                                snapshot.getKey();
-                                String url = sp.child("photoUrl").getValue(String.class);
-                                String des = sp.child("destinationName").getValue(String.class);
-                                final String strt = sp.child("startAddress").getValue(String.class);
-                                final String dest = sp.child("destinationAddress").getValue(String.class);
-                                // check if this is true
-                                    DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
-                                    newRef.addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            List<String> sublist = new ArrayList<String>();
-                                            for (DataSnapshot sp : dataSnapshot.getChildren()) {
-                                                if (sp.getValue().equals(true)) {
-                                                    check = true;
-                                                    sublist.add(sp.getKey().toString());
-                                                }
-                                                totList.add(sublist);
-                                            }
-                                            Log.d("totalList",totList.size()+"");
-                                            final ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, new ImageLoad.EditPlayerAdapterCallback() {
-                                                @Override
-                                                public void deletePressed(int position) {
-                                                    deletePlayer(position);
-//                                                    if (position < urilist.size()) {
-//                                                        urilist.remove(position);
-//                                                        destinations.remove(position);
-//                                                    }
-                                                }
-                                            });
-                                            adapter.notifyDataSetChanged();
-                                            grid = (GridView) findViewById(R.id.gridview);
-                                            grid.setAdapter(adapter);
-                                            grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                @Override
-                                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                    Toast.makeText(Main.this, "You Clicked at " + totList.get(i),
-                                                            Toast.LENGTH_SHORT).show();
-                                                    Log.d("TotList", Arrays.toString(totList.toArray()));
-                                                    Intent intent = new Intent(Main.this, Chat2Activity.class);
-                                                    intent.putStringArrayListExtra("LIST", new ArrayList<String>(totList.get(i)));
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                        }
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-                                        }
-                                    });
-                                    urilist.add(url);
-                                    destinations.add(des);
-                            }
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
 
 
         String channelUrl = getIntent().getStringExtra("groupChannelUrl");
@@ -263,7 +196,7 @@ public class Main extends AppCompatActivity
                     .commit();
         }
 
-
+        refreshGrid();
 
 
         // pass matches to it
@@ -293,6 +226,78 @@ public class Main extends AppCompatActivity
         }
        // nav_image.setImageURI(photoUrl);
 
+
+    }
+
+    public void refreshGrid(){
+        matches = new ArrayList<>();
+        myRef = FirebaseDatabase.getInstance().getReference();
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener
+                () {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                urilist.clear();
+                destinations.clear();
+                list.clear();
+               // DataSnapshot userRef = dataSnapshot.child("users");
+                DataSnapshot tripRef = dataSnapshot.child("users").child(uid).child("trips");
+                for (DataSnapshot snapshot : tripRef.getChildren()) {
+                    final String destid = snapshot.getKey();
+                    for (DataSnapshot sp : snapshot.getChildren()) {
+                        snapshot.getKey();
+                        String url = sp.child("photoUrl").getValue(String.class);
+                        String des = sp.child("destinationName").getValue(String.class);
+                        final String strt = sp.child("startAddress").getValue(String.class);
+                        final String dest = sp.child("destinationAddress").getValue(String.class);
+                        // check if this is true
+                       // DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
+
+                                DataSnapshot listRef = dataSnapshot.child("trips").child(destid).child(strt.toString());
+                                List<String> sublist = new ArrayList<>();
+                                for (DataSnapshot subuser : listRef.getChildren()) {
+                                    if (subuser.getValue().equals(true)) {
+                                        check = true;
+                                        sublist.add(subuser.getKey().toString());
+                                    }
+
+                                }
+                        totList.add(sublist);
+                        urilist.add(url);
+                        destinations.add(des);
+                                Log.d("totalList",totList.size()+"");
+                                final ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, new ImageLoad.EditPlayerAdapterCallback() {
+                                    @Override
+                                    public void deletePressed(int position) {
+                                        deletePlayer(position);
+//                                                    if (position < urilist.size()) {
+//                                                        urilist.remove(position);
+//                                                        destinations.remove(position);
+//                                                    }
+                                    }
+                                });
+                                adapter.notifyDataSetChanged();
+                                grid = (GridView) findViewById(R.id.gridview);
+                                grid.setAdapter(adapter);
+                                grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                        Toast.makeText(Main.this, "You Clicked at " + totList.get(i),
+                                                Toast.LENGTH_SHORT).show();
+                                        Log.d("TotList", Arrays.toString(totList.toArray()));
+                                        Intent intent = new Intent(Main.this, Chat2Activity.class);
+                                        intent.putStringArrayListExtra("LIST", new ArrayList<String>(totList.get(i)));
+                                        startActivity(intent);
+                                    }
+                                });
+
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
     }
 
@@ -359,31 +364,26 @@ public class Main extends AppCompatActivity
                                                         //System.out.println("++++++++++++++++++++" + snapshot);
                                                         snapshot.getRef().removeValue();
                                                     }
+                                                    if(position == 0){
+                                                        recreate();
+                                                    }else
+                                                    refreshGrid();
                                                 }
                                                 @Override
                                                 public void onCancelled(DatabaseError databaseError) {
                                                 }
                                             });
-
                                         }
-
-
                                     }
 
-
                                 }
+
                             }
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
                             }
+
                         });
-                        if(position == 0) {
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(200);
-                            } catch (Exception e) {
-                            }
-                            recreate();
-                        }
 
                     }
                 });
@@ -398,6 +398,7 @@ public class Main extends AppCompatActivity
         // Showing Alert Message
         alertDialog.show();
     }
+
 
     public void deletePressed(int position) {
         deletePlayer(position);
