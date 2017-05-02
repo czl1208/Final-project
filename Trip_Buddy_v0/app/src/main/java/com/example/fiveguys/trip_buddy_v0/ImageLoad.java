@@ -87,17 +87,20 @@ public class ImageLoad extends BaseAdapter {
     private Context mContext;
     private String[] images2;
     private String[] descriptions2;
+    private  Integer[] numberlist2;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private String uid;
-    private List<List<String>> matchNum;
+    private ArrayList<List<String>> matchNum;
     private EditPlayerAdapterCallback callback;
-    public ImageLoad(Context c,List<String> images,List<String> descriptions,
+    public ImageLoad(Context c, DatabaseReference Ref, List<String> images,List<String> descriptions,
                      EditPlayerAdapterCallback edt) {
         callback = edt;
         mContext = c;
         descriptions2 = new String[descriptions.size()];
+        myRef = Ref;
         images2 = new String[images.size()];
+        numberlist2 = new Integer[images.size()];
         for (int i=0;i<descriptions.size(); i++) {
             descriptions2[i] = descriptions.get(i);
             images2[i] = images.get(i);
@@ -148,12 +151,12 @@ public class ImageLoad extends BaseAdapter {
         final ImageView imageView = (ImageView)grid.findViewById(R.id.imageView);
         Button btndelete = (Button)grid.findViewById(R.id.btnDelete);
         final TextView matchNumber = (TextView) grid.findViewById(R.id.matchNumber);
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         matchNum = new ArrayList<List<String>>();
         if(user != null)
         uid = user.getUid();
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference();
         myRef.child("users").child(uid).child("trips").addValueEventListener(new ValueEventListener() {
             @Override public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -206,8 +209,8 @@ public class ImageLoad extends BaseAdapter {
         });
 
         textView.setText(descriptions2[position]);
+//        matchNumber.setText(numberlist2[position]);
        // Log.d("matchNum", Arrays.toString(matchNum.toArray()));
-
 
         try{
             if (images2[position] != null)

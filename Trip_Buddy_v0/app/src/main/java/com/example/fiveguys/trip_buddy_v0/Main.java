@@ -89,6 +89,7 @@ public class Main extends AppCompatActivity
     DatabaseReference myRef;
     StorageReference mStorageRef;
     public static List<String> urilist, destinations;
+    public static List<Integer> numberList;
     List<Pair> matches;
     GridView grid;
     public static List<List<String>> list = new ArrayList<>();
@@ -105,6 +106,7 @@ public class Main extends AppCompatActivity
         urilist = new ArrayList<>();
         destinations = new ArrayList<>();
         totList = new ArrayList<>();
+        numberList = new ArrayList<>();
         if (user != null) {
             username = user.getDisplayName();
             email = user.getEmail();
@@ -240,6 +242,7 @@ public class Main extends AppCompatActivity
                 urilist.clear();
                 destinations.clear();
                 list.clear();
+                numberList.clear();
                // DataSnapshot userRef = dataSnapshot.child("users");
                 DataSnapshot tripRef = dataSnapshot.child("users").child(uid).child("trips");
                 for (DataSnapshot snapshot : tripRef.getChildren()) {
@@ -251,25 +254,27 @@ public class Main extends AppCompatActivity
                         final String strt = sp.child("startAddress").getValue(String.class);
                         final String dest = sp.child("destinationAddress").getValue(String.class);
                         // check if this is true
-                       // DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
+                        // DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
 
-                                DataSnapshot listRef = dataSnapshot.child("trips").child(destid).child(strt.toString());
-                                List<String> sublist = new ArrayList<>();
-                                for (DataSnapshot subuser : listRef.getChildren()) {
-                                    if (subuser.getValue().equals(true)) {
-                                        check = true;
-                                        sublist.add(subuser.getKey().toString());
-                                    }
+                        DataSnapshot listRef = dataSnapshot.child("trips").child(destid).child(strt.toString());
+                        List<String> sublist = new ArrayList<>();
+                        for (DataSnapshot subuser : listRef.getChildren()) {
+                            if (subuser.getValue().equals(true)) {
+                                check = true;
+                                sublist.add(subuser.getKey().toString());
 
-                                }
+                            }
+                        }
+
                         totList.add(sublist);
                         urilist.add(url);
+                        numberList.add(sublist.size());
                         destinations.add(des);
-                               // Log.d("totalList",totList.size()+"");
-                                final ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, new ImageLoad.EditPlayerAdapterCallback() {
-                                    @Override
-                                    public void deletePressed(int position) {
-                                        deletePlayer(position);
+                        // Log.d("totalList",totList.size()+"");
+                        final ImageLoad adapter = new ImageLoad(Main.this, myRef, urilist, destinations, new ImageLoad.EditPlayerAdapterCallback() {
+                            @Override
+                            public void deletePressed(int position) {
+                                deletePlayer(position);
 //                                                    if (position < urilist.size()) {
 //                                                        urilist.remove(position);
 //                                                        destinations.remove(position);
@@ -294,6 +299,7 @@ public class Main extends AppCompatActivity
                                 });
 
                     }
+
                 }
             }
             @Override
@@ -303,8 +309,8 @@ public class Main extends AppCompatActivity
 
     }
 
-    private void addurlList(String url) {
-        urilist.add(url);
+    private void addnumber(int number) {
+        numberList.add(number);
     }
 
     private void addDesList(String des) {
