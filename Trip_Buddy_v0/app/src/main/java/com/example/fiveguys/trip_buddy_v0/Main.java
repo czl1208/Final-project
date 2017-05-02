@@ -210,13 +210,13 @@ public class Main extends AppCompatActivity
                 if(dataSnapshot.exists()) {
                     age = dataSnapshot.getValue(String.class);
                     nav_name.setText(username + ", " + age);
-                    Log.d(TAG, "Age is: " + age);
+                    //Log.d(TAG, "Age is: " + age);
                 }
             }
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
+                //Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
         if(email != null)
@@ -265,7 +265,7 @@ public class Main extends AppCompatActivity
                         totList.add(sublist);
                         urilist.add(url);
                         destinations.add(des);
-                                Log.d("totalList",totList.size()+"");
+                               // Log.d("totalList",totList.size()+"");
                                 final ImageLoad adapter = new ImageLoad(Main.this, urilist, destinations, new ImageLoad.EditPlayerAdapterCallback() {
                                     @Override
                                     public void deletePressed(int position) {
@@ -282,9 +282,9 @@ public class Main extends AppCompatActivity
                                 grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                        Toast.makeText(Main.this, "You Clicked at " + totList.get(i),
-                                                Toast.LENGTH_SHORT).show();
-                                        Log.d("TotList", Arrays.toString(totList.toArray()));
+                                       // Toast.makeText(Main.this, "You Clicked at " + totList.get(i),
+                                         //       Toast.LENGTH_SHORT).show();
+                                        //Log.d("TotList", Arrays.toString(totList.toArray()));
                                         Intent intent = new Intent(Main.this, Chat2Activity.class);
                                         intent.putStringArrayListExtra("LIST", new ArrayList<String>(totList.get(i)));
                                         startActivity(intent);
@@ -334,8 +334,8 @@ public class Main extends AppCompatActivity
                                     String destid = snapshot.getKey();
                                     for (DataSnapshot sp : snapshot.getChildren()) {
                                         final String strt = sp.child("startAddress").getValue(String.class);
-                                        Log.d("strt", strt);
-                                        Log.d("dest", destid);
+                                       // Log.d("strt", strt);
+                                       // Log.d("dest", destid);
                                         Pair pair = new Pair(destid, strt);
                                         matches.add(pair);
                                         Log.i("matches", Arrays.toString(matches.toArray()));
