@@ -20,7 +20,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import static android.graphics.Color.RED;
-
+/*
+This is the activity for register a new user
+ */
 public class Register extends AppCompatActivity {
     private EditText edtEmail;
     private EditText edtUserName;

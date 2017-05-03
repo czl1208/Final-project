@@ -95,6 +95,9 @@ public class Login extends AppCompatActivity implements
         edtUser = (EditText) findViewById(R.id.edtUser);
         mProgressDialog = new ProgressDialog(this);
         //loginButton.setReadPermissions("email", "public_profile");
+        /*
+        Facebook login
+         */
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             private ProfileTracker mProfileTracker;
             @Override
@@ -125,10 +128,7 @@ public class Login extends AppCompatActivity implements
                             mProfileTracker.stopTracking();
                         }
                     };
-//                    String userName = "";
-//                    Uri userPicuri = Uri.parse("");
-//                    uprofile = new UserProfileChangeRequest.Builder()
-//                            .setDisplayName(userName).setPhotoUri(userPicuri).build();
+
                 }
 
             }
@@ -145,6 +145,10 @@ public class Login extends AppCompatActivity implements
                 // ...
             }
         });
+
+        /*
+        Google Log in
+         */
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -195,6 +199,9 @@ public class Login extends AppCompatActivity implements
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+    /*
+    Email Sign in
+     */
     public void signIn(){
         edtUser = (EditText) findViewById(R.id.edtUser);
         edtPassword = (EditText) findViewById(R.id.edtPassword);
@@ -247,6 +254,9 @@ public class Login extends AppCompatActivity implements
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+    /*
+    Get intent result
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

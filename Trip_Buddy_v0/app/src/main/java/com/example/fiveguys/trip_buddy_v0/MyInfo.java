@@ -66,6 +66,9 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        /*
+        get user's information from firebase database
+         */
         mStorageRef = FirebaseStorage.getInstance().getReference();
         if (user != null) {
             username = user.getDisplayName();
@@ -163,6 +166,10 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
         UserImage.setOnClickListener(this);
 
     }
+    /*
+    The following code is for change the user's information
+     */
+
     public void updateProfile(){
         String option = txtEdit.getText().toString();
         if(option.equals("Update your profile")){
@@ -201,6 +208,9 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
             txtEdit.setText("Update your profile");
         }
     }
+    /*
+    The following code is for change the user's profile photo
+     */
     public void showTypeDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final AlertDialog dialog = builder.create();
@@ -303,6 +313,9 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
      *
      * @param uri
      */
+    /*
+    the following code is for crop the photo we take or we choose from file
+     */
     public void cropPhoto(Uri uri) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
@@ -314,31 +327,7 @@ public class MyInfo extends AppCompatActivity implements View.OnClickListener{
         intent.putExtra("return-data", true);
         startActivityForResult(intent, 3);
     }
-
-//    private void setPicToView(Bitmap mBitmap) {
-//        String sdStatus = Environment.getExternalStorageState();
-//        if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) {
-//            return;
-//        }
-//        FileOutputStream b = null;
-//        File file = new File(path);
-//        file.mkdirs();
-//        String fileName = path + "head.jpg";
-//        try {
-//            b = new FileOutputStream(fileName);
-//            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//
-//                b.flush();
-//                b.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    
 
     @Override
     public void onClick(View v) {
