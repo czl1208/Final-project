@@ -22,7 +22,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-
+// chat fragment accessed from the sidebar
 public class GroupChannelListFragment extends Fragment {
 
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_LIST";

@@ -58,6 +58,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // passing the user info variables from the last activity
         setContentView(R.layout.activity_create_group_channel);
         usridlist = new ArrayList<>();
         usridlist = getIntent().getStringArrayListExtra("LIST");
@@ -68,6 +69,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
         mSelectedIds = new ArrayList<>();
 
 
+        // show all the users that could be selected into caht
         if (savedInstanceState == null) {
             Fragment fragment = SelectUserFragment.newInstance(usridlist);
             FragmentManager manager = getSupportFragmentManager();
@@ -125,17 +127,12 @@ public class CreateGroupChannelActivity extends AppCompatActivity
 
     /**
      * Creates a new Group Channel.
-     *
      * Note that if you have not included empty channels in your GroupChannelListQuery,
      * the channel will not be shown in the user's channel list until at least one message
      * has been sent inside.
-     *
-     * @param userIds   The users to be members of the new channel.
-     * @param distinct  Whether the channel is unique for the selected members.
-     *                  If you attempt to create another Distinct channel with the same members,
-     *                  the existing channel instance will be returned.
      */
     private void createGroupChannel(List<String> userIds, boolean distinct) {
+        // updating the group chat's name and picture with our own pictures that matches our trips
         GroupChannel.createChannelWithUserIds(userIds, true, destination, photoUri, "", new GroupChannel.GroupChannelCreateHandler() {
             @Override
             public void onResult(GroupChannel groupChannel, SendBirdException e) {
@@ -143,8 +140,6 @@ public class CreateGroupChannelActivity extends AppCompatActivity
                     // Error!
                     return;
                 }
-
-//                Log.i("name", destination);
                 Intent intent = new Intent();
                 intent.putExtra(EXTRA_NEW_CHANNEL_URL, groupChannel.getUrl());
                 setResult(RESULT_OK, intent);

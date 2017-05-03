@@ -19,7 +19,7 @@ import com.example.fiveguys.trip_buddy_v0.utils.*;
 
 import java.util.List;
 
-
+// class structure for each individual group chat
 public class GroupChatFragment extends Fragment {
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHAT";
 
@@ -321,8 +321,6 @@ public class GroupChatFragment extends Fragment {
     /**
      * Display which users are typing.
      * If more than two users are currently typing, this will state that "multiple users" are typing.
-     *
-     * @param typingUsers The list of currently typing users.
      */
     private void displayTyping(List<User> typingUsers) {
 
@@ -428,8 +426,6 @@ public class GroupChatFragment extends Fragment {
 
     /**
      * Notify other users whether the current user is typing.
-     *
-     * @param typing Whether the user is currently typing.
      */
     private void setTypingStatus(boolean typing) {
         if (mChannel == null) {

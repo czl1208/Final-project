@@ -33,7 +33,7 @@ import com.sendbird.android.User;
 import java.util.ArrayList;
 import java.util.List;
 
-
+// Fragment 2 only serves the chat creating function from the trip group
 public class Chat2Activity extends AppCompatActivity {
 
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_MAIN";

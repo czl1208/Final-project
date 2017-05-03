@@ -15,7 +15,7 @@ import com.example.fiveguys.trip_buddy_v0.R;
 
 import java.util.List;
 
-
+// use Sendbird library methods to show the list of user
 public class MemberListActivity extends AppCompatActivity{
 
     private UserListAdapter mListAdapter;

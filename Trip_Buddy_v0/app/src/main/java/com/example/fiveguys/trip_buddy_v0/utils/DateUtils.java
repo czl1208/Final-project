@@ -26,8 +26,6 @@ public class DateUtils {
     /**
      * If the given time is of a different date, display the date.
      * If it is of the same date, display the time.
-     * @param timeInMillis  The time to convert, in milliseconds.
-     * @return  The time or date.
      */
     public static String formatDateTime(long timeInMillis) {
         if(isToday(timeInMillis)) {
@@ -56,9 +54,6 @@ public class DateUtils {
 
     /**
      * Checks if two dates are of the same day.
-     * @param millisFirst   The time in milliseconds of the first date.
-     * @param millisSecond  The time in milliseconds of the second date.
-     * @return  Whether {@param millisFirst} and {@param millisSecond} are off the same day.
      */
     public static boolean hasSameDate(long millisFirst, long millisSecond) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());

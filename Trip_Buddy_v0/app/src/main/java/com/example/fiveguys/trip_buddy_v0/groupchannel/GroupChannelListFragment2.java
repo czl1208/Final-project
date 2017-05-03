@@ -26,6 +26,8 @@ import static android.app.Activity.RESULT_OK;
 import static com.example.fiveguys.trip_buddy_v0.Main.totList;
 
 
+
+// Fragment 2 is only serving the chat creating function from the main group
 public class GroupChannelListFragment2 extends Fragment {
 
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_LIST";
@@ -206,8 +208,6 @@ public class GroupChannelListFragment2 extends Fragment {
     /**
      * Enters a Group Channel. Upon entering, a GroupChatFragment will be inflated
      * to display messages within the channel.
-     *
-     * @param channel The Group Channel to enter.
      */
     void enterGroupChannel(GroupChannel channel) {
         final String channelUrl = channel.getUrl();
@@ -217,8 +217,6 @@ public class GroupChannelListFragment2 extends Fragment {
 
     /**
      * Enters a Group Channel with a URL.
-     *
-     * @param channelUrl The URL of the channel to enter.
      */
     void enterGroupChannel(String channelUrl) {
         GroupChatFragment2 fragment = GroupChatFragment2.newInstance(channelUrl);
@@ -231,8 +229,6 @@ public class GroupChannelListFragment2 extends Fragment {
     /**
      * Creates a new query to get the list of the user's Group Channels,
      * then replaces the existing dataset.
-     *
-     * @param numChannels The number of channels to load.
      */
     private void refreshChannelList(int numChannels) {
         mChannelListQuery = GroupChannel.createMyGroupChannelListQuery();
@@ -278,8 +274,6 @@ public class GroupChannelListFragment2 extends Fragment {
 
     /**
      * Leaves a Group Channel.
-     *
-     * @param channel The channel to leave.
      */
     private void leaveChannel(final GroupChannel channel) {
         channel.leave(new GroupChannel.GroupChannelLeaveHandler() {

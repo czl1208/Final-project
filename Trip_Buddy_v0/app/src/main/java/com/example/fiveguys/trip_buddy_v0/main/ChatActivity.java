@@ -29,7 +29,7 @@ import com.example.fiveguys.trip_buddy_v0.groupchannel.*;
 import com.example.fiveguys.trip_buddy_v0.utils.*;
 import com.sendbird.android.User;
 
-
+// chat1 activity serves the chat history function which can e
 public class ChatActivity extends AppCompatActivity {
 
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_MAIN";

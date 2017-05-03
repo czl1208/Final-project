@@ -25,7 +25,7 @@ import java.util.List;
 import static com.example.fiveguys.trip_buddy_v0.groupchannel.GroupChannelListFragment2.matcheddestination;
 import static com.example.fiveguys.trip_buddy_v0.groupchannel.GroupChannelListFragment2.matchedusridlist;
 
-
+// class structure for each individual group chat. Frag2 is construction for side bar chat access.
 public class GroupChatFragment2 extends Fragment {
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHAT";
 
