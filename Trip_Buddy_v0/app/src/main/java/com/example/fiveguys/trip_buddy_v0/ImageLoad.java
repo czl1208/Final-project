@@ -82,7 +82,10 @@ import org.w3c.dom.Text;
 
 import static java.security.AccessController.getContext;
 
-
+/**
+ * a pulic class adapter extends from BaseAdapter, passing view from adapter to gridview in main
+ * activity
+ */
 public class ImageLoad extends BaseAdapter {
     private Context mContext;
     private String[] images2;
@@ -93,6 +96,9 @@ public class ImageLoad extends BaseAdapter {
     private String uid;
     private ArrayList<List<String>> matchNum;
     private EditPlayerAdapterCallback callback;
+
+    // ImageLoad constructor passing from main activity to adapter, passes snapshot from Main
+    // activity
     public ImageLoad(Context c, DataSnapshot Ref, List<String> images,List<String> descriptions,
                      EditPlayerAdapterCallback edt) {
         callback = edt;
@@ -134,16 +140,6 @@ public class ImageLoad extends BaseAdapter {
         if (convertView == null) {
             grid = new View(mContext);
             grid = inflater.inflate(R.layout.gridview_text_img, null);
-//            grid.setOnClickListener(new View.OnClickListener() {
-//
-//                @Override
-//                public void onClick(View v) {
-//                    // TODO Auto-generated method stub
-//                    Toast.makeText(mContext, "You Clicked "+String.valueOf(position), Toast.LENGTH_LONG)
-//                            .show();
-//                }
-//            });
-
         } else {
             grid = (View)convertView;
         }
@@ -155,16 +151,16 @@ public class ImageLoad extends BaseAdapter {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         matchNum = new ArrayList<List<String>>();
         if(user != null)
-        uid = user.getUid();
+        uid = user.getUid(); // get uid for current user
         database = FirebaseDatabase.getInstance();
-                DataSnapshot tripref = dataSnapshot.child("users").child(uid).child("trips");
+                DataSnapshot tripref = dataSnapshot.child("users").child(uid).child("trips"); //
+        // goes to users table in firebase to do query
                 for (DataSnapshot snapshot : tripref.getChildren()) {
                     String destid = snapshot.getKey(); // only one destination
                     for (DataSnapshot sp : snapshot.getChildren()) {
                         String strt = sp.child("startAddress").getValue(String.class);
-                        //                        System.out.println(destid + "  " + strt);
                         if (destid != null && strt != null) {
-                            DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
+                            DatabaseReference newRef = database.getReference("trips/" + destid + "/" +strt.toString());
                             newRef.addValueEventListener(new ValueEventListener() {
                                 List<String> sublist = new ArrayList<String>();
                                 @Override public void onDataChange(DataSnapshot dataSnapshot) {

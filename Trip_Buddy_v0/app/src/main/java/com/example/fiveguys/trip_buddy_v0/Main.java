@@ -98,6 +98,10 @@ public class Main extends AppCompatActivity
     private NavigationView mNavView;
     public static boolean check;
 
+    /**
+     * Main onCreate function for main activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -170,7 +174,6 @@ public class Main extends AppCompatActivity
             }
         });
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -202,23 +205,22 @@ public class Main extends AppCompatActivity
 
 
         // pass matches to it
-
         nav_name.setText(username);
         myRef.child("users").child(uid).child("age").addValueEventListener(new ValueEventListener() {
             @Override
+            /**
+             * Listene to user's age
+             */
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 if(dataSnapshot.exists()) {
                     age = dataSnapshot.getValue(String.class);
                     nav_name.setText(username + ", " + age);
-                    //Log.d(TAG, "Age is: " + age);
                 }
             }
             @Override
             public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                //Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
         if(email != null)
@@ -240,12 +242,11 @@ public class Main extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-//        try{
-//            TimeUnit.MILLISECONDS.sleep(800);
-//        } catch (Exception e) {}
-//        refreshGrid();
     }
 
+    /**
+     * refreshGrid to refresh gridview layout
+     */
     public void refreshGrid(){
         matches = new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
@@ -258,7 +259,6 @@ public class Main extends AppCompatActivity
                 destinations.clear();
                 list.clear();
                 numberList.clear();
-               // DataSnapshot userRef = dataSnapshot.child("users");
                 DataSnapshot tripRef = dataSnapshot.child("users").child(uid).child("trips");
                 for (DataSnapshot snapshot : tripRef.getChildren()) {
                     final String destid = snapshot.getKey();
@@ -267,33 +267,26 @@ public class Main extends AppCompatActivity
                         String url = sp.child("photoUrl").getValue(String.class);
                         String des = sp.child("destinationName").getValue(String.class);
                         final String strt = sp.child("startAddress").getValue(String.class);
-                        final String dest = sp.child("destinationAddress").getValue(String.class);
-                        // check if this is true
-                        // DatabaseReference newRef = database.getReference("trips/" + destid + "/" + strt.toString());
-
+                        // listRef, get reference of trips for specific current user to get start
+                        // address
                         DataSnapshot listRef = dataSnapshot.child("trips").child(destid).child(strt.toString());
                         List<String> sublist = new ArrayList<>();
                         for (DataSnapshot subuser : listRef.getChildren()) {
                             if (subuser.getValue().equals(true)) {
                                 check = true;
                                 sublist.add(subuser.getKey().toString());
-
                             }
                         }
-
-                        totList.add(sublist);
-                        urilist.add(url);
-                        numberList.add(sublist.size());
-                        destinations.add(des);
-                        // Log.d("totalList",totList.size()+"");
+                        totList.add(sublist); // for each user's matched friend into total list
+                        urilist.add(url); // stores image url
+                        numberList.add(sublist.size()); // number list store matching number
+                        destinations.add(des); // destinations store destination
                         final ImageLoad adapter = new ImageLoad(Main.this, dataSnapshot, urilist, destinations, new ImageLoad.EditPlayerAdapterCallback() {
                             @Override
                             public void deletePressed(int position) {
                                 deletePlayer(position);
-//                                                    if (position < urilist.size()) {
-//                                                        urilist.remove(position);
-//                                                        destinations.remove(position);
-//                                                    }
+                                // delete image function implemented from
+                                // interface
                                     }
                                 });
                                 adapter.notifyDataSetChanged();
@@ -358,12 +351,10 @@ public class Main extends AppCompatActivity
                                     String destid = snapshot.getKey();
                                     for (DataSnapshot sp : snapshot.getChildren()) {
                                         final String strt = sp.child("startAddress").getValue(String.class);
-                                       // Log.d("strt", strt);
-                                       // Log.d("dest", destid);
                                         Pair pair = new Pair(destid, strt);
-                                        matches.add(pair);
-                                        Log.i("matches", Arrays.toString(matches.toArray()));
-                                        if (position < matches.size()) {
+                                        matches.add(pair); // add pair of start address and
+                                        // destination address saved into matches list
+                                        if (position < matches.size()) { // make sure position
                                             String dest1 = matches.get(position).first.toString();
                                             String strt1 = matches.get(position).second.toString();
                                             myRef.child("trips").child(""+dest1).child(strt1).child(uid).setValue(false);
@@ -380,7 +371,6 @@ public class Main extends AppCompatActivity
                                                 public void onCancelled(DatabaseError databaseError) {
                                                 }
                                             });
-
                                             myRef.child("users").child(uid).child("trips").child(""+dest1).addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -452,36 +442,11 @@ public class Main extends AppCompatActivity
         }
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        //Log.d("6666666666666666", "777777777777777777777777777777777777777777777777777777");
-        //Log.d("5555555555555555", "777777777777777777777777777777777777777777777777777777");
-
         if (id == R.id.nav_account) {
             Intent intent = new Intent(getApplicationContext(), MyInfo.class);// Handle the camera action
             startActivity(intent);
