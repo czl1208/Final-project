@@ -1,14 +1,10 @@
 package com.example.fiveguys.trip_buddy_v0;
 
-import android.*;
-import android.Manifest;
-import android.app.Activity;
+
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
@@ -20,26 +16,20 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceLikelihood;
-import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.PlacePhotoMetadata;
 import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
 import com.google.android.gms.location.places.PlacePhotoMetadataResult;
@@ -58,13 +48,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,11 +61,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.android.gms.R.id.auto;
-import static com.google.android.gms.R.id.url;
 
 public class NewTrip extends FragmentActivity
         implements OnMapReadyCallback,
@@ -110,7 +95,7 @@ public class NewTrip extends FragmentActivity
     private LatLngBounds sBound, cBound;
     private String cPlaceNames, cPlaceid, cPlaceAddresses,cPlaceAttributions;
     private LatLng cPlaceLatLngs;
-    private boolean DesLayout;
+    private boolean DesLayout; // am I on the destination layout?
     private boolean Storagepermission;
 
     private String sCity;
@@ -128,6 +113,7 @@ public class NewTrip extends FragmentActivity
         super.onCreate(savedInstanceState);
         athletic_font = Typeface.createFromAsset(getAssets(), "fonts/athletic.ttf");
         if (savedInstanceState != null) {
+            //get the address and location selected on the start place page
             DesLayout = savedInstanceState.getBoolean("DesLayout");
             startAddress = savedInstanceState.getString("cAddress");
             startLocation = new LatLng(savedInstanceState.getDouble("startLat"),savedInstanceState.getDouble("startLong"));
@@ -135,14 +121,15 @@ public class NewTrip extends FragmentActivity
         user = FirebaseAuth.getInstance().getCurrentUser();
         mStorageRef = FirebaseStorage.getInstance().getReference();
         if (user != null) {
+            //get current user id
             uid = user.getUid();
         }
         Users = FirebaseDatabase.getInstance().getReference().child("users");
 
         if(DesLayout) {
-           loadDesLayout();
-        }else {
-            setContentView(R.layout.activity_new_trip_start);
+           loadDesLayout();// I am in the destination layout
+        }else {//I am not in the destination
+            setContentView(R.layout.activity_new_trip_start); // load start location layout
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .enableAutoManage(this /* FragmentActivity */,
                             this /* OnConnectionFailedListener */)
@@ -164,7 +151,7 @@ public class NewTrip extends FragmentActivity
                 @Override
                 public void onClick(View v) {
                     DesLayout = true;
-                    recreate();
+                    recreate(); // recreate and the activity will load the destination layout
                 }
             });
         }
@@ -204,18 +191,20 @@ public class NewTrip extends FragmentActivity
             @Override
             public void onClick(View v) {
                 if(sId == null){
+                    //user didn't search for destination
                     Toast toast = Toast.makeText(getApplicationContext(), "Search For a Destination", Toast.LENGTH_SHORT);
                     toast.show();
                     return;
                 }
                 if(SavingPhoto){
+                    //picture is still saving
                     Toast toast = Toast.makeText(getApplicationContext(), "Slow Connection Try Again", Toast.LENGTH_SHORT);
                     toast.show();
                     return;
                 }
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    //placePhotosTask();
+                   //save information in the database
                     String uid = user.getUid();
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DateFormat df = new SimpleDateFormat("MM_dd_yy");
@@ -254,6 +243,7 @@ public class NewTrip extends FragmentActivity
                     finish();
 
                 } else {
+                    //no user information
                     DesLayout = false;
                     Intent intent = new Intent(getApplicationContext(), Login.class);
                     startActivity(intent);
@@ -304,6 +294,7 @@ public class NewTrip extends FragmentActivity
                     Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
                     List<Address> addresses;
                     try {
+                        //user geocoder to grab the address of current location
                         addresses = gcd.getFromLocation(cLocation.latitude, cLocation.longitude, 1);
 
                         if (addresses.size() > 0)
@@ -318,6 +309,7 @@ public class NewTrip extends FragmentActivity
                     }
                     cAddress = address.toString();
                     mMap.clear();
+                    //place marker and move camera
                     mMap.addMarker(new MarkerOptions()
                             .title(address1.toString())
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_person_pin))
@@ -325,7 +317,7 @@ public class NewTrip extends FragmentActivity
                             .snippet(address2.toString()));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(cBound,10));
                     String address11 = address1.toString();
-                    address11 = address11.replaceAll("[0-9]","");
+                    address11 = address11.replaceAll("[0-9]",""); // use the second line of the address as the address to display
                     Start.setText(address11);
                 }
             }
@@ -335,7 +327,7 @@ public class NewTrip extends FragmentActivity
                 CharSequence text = "place not found";
                 Toast toast = Toast.makeText(context,text,Toast.LENGTH_SHORT);
                 toast.show();
-                Log.i(TAG, "An error occurred: " + status);
+
             }
         });
     }
@@ -344,8 +336,8 @@ public class NewTrip extends FragmentActivity
             public void onConnectionFailed(@NonNull ConnectionResult result) {
                 // Refer to the reference doc for ConnectionResult to see what error codes might
                 // be returned in onConnectionFailed.
-                Log.d(TAG, "Play services connection failed: ConnectionResult.getErrorCode() = "
-                        + result.getErrorCode());
+//                Log.d(TAG, "Play services connection failed: ConnectionResult.getErrorCode() = "
+//                        + result.getErrorCode());
             }
 
             /**
@@ -353,7 +345,7 @@ public class NewTrip extends FragmentActivity
              */
             @Override
             public void onConnectionSuspended(int cause) {
-                Log.d(TAG, "Play services connection suspended");
+//                Log.d(TAG, "Play services connection suspended");
             }
 
 
@@ -378,6 +370,7 @@ public class NewTrip extends FragmentActivity
          * device. The result of the permission request is handled by a callback,
          * onRequestPermissionsResult.
          */
+        //check if location permission is allowed
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -391,14 +384,15 @@ public class NewTrip extends FragmentActivity
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
          */
-        if (mLocationPermissionGranted) {
+        if (mLocationPermissionGranted) {//show current place
             mLastKnownLocation = LocationServices.FusedLocationApi
                     .getLastLocation(mGoogleApiClient);
         }
         if (mLastKnownLocation != null) {
             showCurrentPlace();
         }else{
-            Log.d(TAG, "Current location is null. Using defaults.");
+//            Log.d(TAG, "Current location is null. Using defaults.");
+            //show default location
             mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
@@ -457,7 +451,7 @@ public class NewTrip extends FragmentActivity
             }
 
             cAddress = address.toString();
-
+            //mark searched location
             cLocation = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
             mMap.clear();
             mMap.addMarker(new MarkerOptions()
@@ -468,9 +462,11 @@ public class NewTrip extends FragmentActivity
             if(!DesLayout) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cLocation, DEFAULT_ZOOM));
                 String address11 = address1.toString();
+                //get rid of zip code
                 address11 = address11.replaceAll("[0-9]","");
                 Start.setText(address11);
             }else{
+
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions()
                         .title(startAddress)
@@ -568,6 +564,7 @@ public class NewTrip extends FragmentActivity
 
     abstract class PhotoTask extends AsyncTask<String, Void, com.example.fiveguys.trip_buddy_v0.NewTrip.PhotoTask.AttributedPhoto> {
 
+        //async task for load image
         private int mHeight;
 
         private int mWidth;
@@ -635,6 +632,7 @@ public class NewTrip extends FragmentActivity
                 .snippet((String)sAddress));
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(sBound,10));
             Destination.setText(sPlace);
+            //load photo async task
             placePhotosTask();
     }
     public boolean onMyLocationButtonClick() {
